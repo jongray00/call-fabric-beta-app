@@ -16,8 +16,8 @@ Ensure you have the following prerequisites installed:
 First, clone the repository to your local machine using:
 
 ```bash
-git clone [Repository URL]
-cd [Repository Name]
+git clone gh repo clone jongray00/call-fabric-beta-app
+cd call-fabric-beta-app
 ```
 ### Step 2: Install Dependencies
 Install the necessary Node.js dependencies:
