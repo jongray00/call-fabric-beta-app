@@ -67,7 +67,7 @@ Do not share your .env file or expose sensitive keys publicly.
 Once your environment variables are set, start your application using:
 
 ```bash
-npm start
+npm run start
 ```
 Your application should now be running on http://localhost:3000 (or another specified port). Ensure your application's callbacks and webhooks are correctly set up to interact with external services.
 
@@ -80,7 +80,7 @@ Verify network settings and firewall rules.
 For more detailed logs, run your application with debugging enabled:
 
 ```bash
-DEBUG=signalwire* npm start
+DEBUG=signalwire* npm run start
 ```
 
 ## API Notes
