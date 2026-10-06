@@ -1,0 +1,208 @@
+{
+  "checks": {
+    "fixtures_exist": true,
+    "ch0_is_pstn": true,
+    "ch1_is_browser": true,
+    "silence_gap_found": true,
+    "skip_shorter": true,
+    "skip_no_gap": true
+  },
+  "analysis": {
+    "silence_variant": {
+      "probe": {
+        "format": "mp3",
+        "codec": "mp3",
+        "channels": 2,
+        "sample_rate": 8000,
+        "duration_s": 20.16,
+        "bit_rate": "64246"
+      },
+      "channels": {
+        "ch0": {
+          "majority": "pstn_1000",
+          "silent_seconds": [
+            8,
+            9,
+            10,
+            11,
+            12
+          ]
+        },
+        "ch1": {
+          "majority": "browser_440",
+          "silent_seconds": [
+            8,
+            9,
+            10,
+            11,
+            12
+          ]
+        }
+      },
+      "timeline": [
+        [
+          "pstn_1000",
+          "browser_440"
+        ],
+        [
+          "pstn_1000",
+          "browser_440"
+        ],
+        [
+          "pstn_1000",
+          "browser_440"
+        ],
+        [
+          "pstn_1000",
+          "browser_440"
+        ],
+        [
+          "pstn_1000",
+          "browser_440"
+        ],
+        [
+          "pstn_1000",
+          "browser_440"
+        ],
+        [
+          "pstn_1000",
+          "browser_440"
+        ],
+        [
+          "pstn_1000",
+          "browser_440"
+        ],
+        [
+          "silence",
+          "silence"
+        ],
+        [
+          "silence",
+          "silence"
+        ],
+        [
+          "silence",
+          "silence"
+        ],
+        [
+          "silence",
+          "silence"
+        ],
+        [
+          "silence",
+          "silence"
+        ],
+        [
+          "pstn_1000",
+          "browser_440"
+        ],
+        [
+          "pstn_1000",
+          "browser_440"
+        ],
+        [
+          "pstn_1000",
+          "browser_440"
+        ],
+        [
+          "pstn_1000",
+          "browser_440"
+        ],
+        [
+          "pstn_1000",
+          "browser_440"
+        ],
+        [
+          "pstn_1000",
+          "browser_440"
+        ],
+        [
+          "pstn_1000",
+          "browser_440"
+        ]
+      ]
+    },
+    "skip_variant": {
+      "probe": {
+        "format": "mp3",
+        "codec": "mp3",
+        "channels": 2,
+        "sample_rate": 8000,
+        "duration_s": 15.192,
+        "bit_rate": "64327"
+      },
+      "channels": {
+        "ch0": {
+          "majority": "pstn_1000",
+          "silent_seconds": []
+        },
+        "ch1": {
+          "majority": "browser_440",
+          "silent_seconds": []
+        }
+      },
+      "timeline": [
+        [
+          "pstn_1000",
+          "browser_440"
+        ],
+        [
+          "pstn_1000",
+          "browser_440"
+        ],
+        [
+          "pstn_1000",
+          "browser_440"
+        ],
+        [
+          "pstn_1000",
+          "browser_440"
+        ],
+        [
+          "pstn_1000",
+          "browser_440"
+        ],
+        [
+          "pstn_1000",
+          "browser_440"
+        ],
+        [
+          "pstn_1000",
+          "browser_440"
+        ],
+        [
+          "pstn_1000",
+          "browser_440"
+        ],
+        [
+          "pstn_1000",
+          "browser_440"
+        ],
+        [
+          "pstn_1000",
+          "browser_440"
+        ],
+        [
+          "pstn_1000",
+          "browser_440"
+        ],
+        [
+          "pstn_1000",
+          "browser_440"
+        ],
+        [
+          "pstn_1000",
+          "browser_440"
+        ],
+        [
+          "pstn_1000",
+          "browser_440"
+        ],
+        [
+          "pstn_1000",
+          "browser_440"
+        ]
+      ]
+    }
+  }
+}

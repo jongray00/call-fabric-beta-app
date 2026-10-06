@@ -1,0 +1,5 @@
+evidence/sdk/pkg/
+evidence/sdk/*.tgz
+__pycache__/
+.env
+node_modules/
