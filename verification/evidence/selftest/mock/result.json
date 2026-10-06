@@ -1,0 +1,170 @@
+{
+  "checks": {
+    "a1_confirmed_with_ringing_devices": true,
+    "a4_captured_call_fields": true,
+    "anchor_id_extracted": true,
+    "hangup_sent_to_anchor": true,
+    "denylist_blocks_911": true,
+    "unowned_number_blocked": true,
+    "a1_refuted_when_no_ringing": true
+  },
+  "a1": {
+    "id": "MOCK_A1",
+    "hypothesis": null,
+    "status": "CONFIRMED",
+    "runs": [
+      {
+        "pass": true,
+        "observed": {
+          "ringing": {
+            "A1r0-1": true,
+            "A1r0-2": true,
+            "A1r0-3": true
+          },
+          "anchor": "anchor-1"
+        },
+        "run": 1
+      },
+      {
+        "pass": true,
+        "observed": {
+          "ringing": {
+            "A1r1-1": true,
+            "A1r1-2": true,
+            "A1r1-3": true
+          },
+          "anchor": "anchor-1"
+        },
+        "run": 2
+      },
+      {
+        "pass": true,
+        "observed": {
+          "ringing": {
+            "A1r2-1": true,
+            "A1r2-2": true,
+            "A1r2-3": true
+          },
+          "anchor": "anchor-1"
+        },
+        "run": 3
+      }
+    ],
+    "evidence": [
+      "evidence/webhooks/MOCK_A1",
+      "evidence/browser/MOCK_A1"
+    ]
+  },
+  "a4": {
+    "id": "MOCK_A4",
+    "hypothesis": null,
+    "status": "CONFIRMED",
+    "runs": [
+      {
+        "pass": true,
+        "observed": {
+          "top_level_keys": [
+            "call",
+            "params"
+          ],
+          "call_keys": [
+            "call_id",
+            "from",
+            "to",
+            "type"
+          ],
+          "headers": {
+            "host": "127.0.0.1:8001",
+            "accept": "*/*",
+            "accept-encoding": "gzip, deflate",
+            "connection": "keep-alive",
+            "user-agent": "python-httpx/0.28.1",
+            "content-length": "100",
+            "content-type": "application/json"
+          },
+          "body": {
+            "call": {
+              "call_id": "anchor-1",
+              "from": "+15615550001",
+              "to": "+15615550002",
+              "type": "phone"
+            },
+            "params": {}
+          }
+        },
+        "run": 1
+      },
+      {
+        "pass": true,
+        "observed": {
+          "top_level_keys": [
+            "call",
+            "params"
+          ],
+          "call_keys": [
+            "call_id",
+            "from",
+            "to",
+            "type"
+          ],
+          "headers": {
+            "host": "127.0.0.1:8001",
+            "accept": "*/*",
+            "accept-encoding": "gzip, deflate",
+            "connection": "keep-alive",
+            "user-agent": "python-httpx/0.28.1",
+            "content-length": "100",
+            "content-type": "application/json"
+          },
+          "body": {
+            "call": {
+              "call_id": "anchor-1",
+              "from": "+15615550001",
+              "to": "+15615550002",
+              "type": "phone"
+            },
+            "params": {}
+          }
+        },
+        "run": 2
+      },
+      {
+        "pass": true,
+        "observed": {
+          "top_level_keys": [
+            "call",
+            "params"
+          ],
+          "call_keys": [
+            "call_id",
+            "from",
+            "to",
+            "type"
+          ],
+          "headers": {
+            "host": "127.0.0.1:8001",
+            "accept": "*/*",
+            "accept-encoding": "gzip, deflate",
+            "connection": "keep-alive",
+            "user-agent": "python-httpx/0.28.1",
+            "content-length": "100",
+            "content-type": "application/json"
+          },
+          "body": {
+            "call": {
+              "call_id": "anchor-1",
+              "from": "+15615550001",
+              "to": "+15615550002",
+              "type": "phone"
+            },
+            "params": {}
+          }
+        },
+        "run": 3
+      }
+    ],
+    "evidence": [
+      "evidence/webhooks/MOCK_A4"
+    ]
+  }
+}

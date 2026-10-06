@@ -13,7 +13,6 @@ import asyncio
 import json
 import threading
 import time
-from pathlib import Path
 
 import uvicorn
 from fastapi import FastAPI, Request

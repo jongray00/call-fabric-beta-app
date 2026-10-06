@@ -1,0 +1,59 @@
+{
+  "checks": {
+    "umd_global_present": true,
+    "SignalWire_class": true,
+    "StaticCredentialProvider": true,
+    "TokenRefreshError_exported": true,
+    "page_reported_to_backend": true,
+    "register_without_token_fails_cleanly": true
+  },
+  "shape": {
+    "global": "object",
+    "SignalWire": "function",
+    "StaticCredentialProvider": "function",
+    "TokenRefreshError": "function",
+    "keys": [
+      "Address",
+      "AuxiliaryLegCancelledError",
+      "AuxiliaryLegTimeoutError",
+      "CallCreateError",
+      "CallNotReadyError",
+      "ClientPreferences",
+      "CollectionFetchError",
+      "DPoPInitError",
+      "DeviceTokenError",
+      "EmbedTokenCredentialProvider",
+      "InvalidCredentialsError",
+      "MediaAccessError",
+      "MediaTrackError",
+      "MessageParseError",
+      "OverconstrainedFallbackError",
+      "Participant",
+      "ParticipantNotReadyError",
+      "PreflightError",
+      "RecoveryError",
+      "ScreenShareAlreadyActiveError",
+      "SelfCapabilities",
+      "SelfParticipant",
+      "SignalWire",
+      "StaticCredentialProvider",
+      "TokenRefreshError",
+      "UnexpectedError",
+      "User",
+      "VertoPongError",
+      "WebRTCCall",
+      "embeddableCall",
+      "getLogger",
+      "isSelfParticipant",
+      "ready",
+      "setDebugOptions",
+      "setLogLevel",
+      "setLogger",
+      "version"
+    ]
+  },
+  "register": {
+    "ok": false,
+    "error": "page.evaluate: Error: token fetch 503\n    at fetchToken (http://127.0.0.1:8000/static/device.html?device=selftest-dev1:41:20)\n    at async Object.register (http://127.0.0.1:8000/static/device.html?device=selftest-dev1:51:19)\n    at async <anonymous>:316:30"
+  }
+}

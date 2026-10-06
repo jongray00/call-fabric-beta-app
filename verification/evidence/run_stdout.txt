@@ -1,0 +1,36 @@
+| ID | Question | Status | One-line answer |
+|---|---|---|---|
+| A1 | Does calling one Subscriber ring all of its registered devices? | DOCUMENTED (not observed) | Documented yes: dialing a Subscriber rings every live registration at once; not yet observed. |
+| A2 | First-answer-wins: when one device answers, do the others stop ringing, and how fast? | BLOCKED | Unknown: no document states what the other devices see or how fast; live test required. |
+| A3 | Does reject() on one device stop all devices on that Subscriber, and other Subscribers in the same parallel group? | BLOCKED | Unknown: reject() stops the rejecting device, but its effect on other devices or parallel Subscribers is undocumented. |
+| A4 | What does the inbound SWML webhook request contain? | DOCUMENTED (not observed) | POST JSON with call, vars, envs, params; call has call_id, from, to, type, direction, headers and more. |
+| A5 | Can the browser dial an SWML webhook address with userVariables, and what caller identity does the webhook receive? | DOCUMENTED (not observed) | dial(address, { userVariables }) is the confirmed v4 shape; the webhook field for userVariables and caller identity is undocumented. |
+| A6 | connect serial fallback to a phone number after the Subscriber times out, and connect_result branching | DOCUMENTED (not observed) | connect.serial gives fallback; connect_result is connected or failed and drives the voicemail branch. |
+| A7 | Exact REST command names and payloads for record start, pause, resume, stop, and hangup | DOCUMENTED (not observed) | calling.record, calling.record.pause (behavior skip or silence), calling.record.resume, calling.record.stop, calling.end. |
+| A8 | Stereo MP3 of both parties: format and channel mapping, inbound and outbound | BLOCKED | Unknown: stereo MP3 is supported, but channel-to-party mapping is undocumented; analyzer ready. |
+| A9 | Which status webhooks fire for connect, recording and call end, and where is the REST recording callback configured? | DOCUMENTED (not observed) | calling.call.connect, calling.call.state and calling.call.record events; REST recording callback goes in params.status_url. |
+| A10 | Which call_id must REST commands target (anchor rule)? | BLOCKED | Unknown: no anchor-leg rule is documented; live test sends commands to both legs. |
+| A11 | Maximum devices per Subscriber | BLOCKED | Unknown: no device limit is documented in the docs or the SDK. |
+| A12 | Cost per call by product | BLOCKED | No per-call cost data (no calls placed); list rates WebRTC $0.003/min, local PSTN $0.0066 in / $0.008 out, recording $0.002/min. |
+| B1 | No device registered for a Subscriber in the parallel list: fail fast or wait for timeout? | BLOCKED | Unknown: fail-fast versus timeout with zero registrations is undocumented. |
+| B2 | Parallel destination cap for connect.parallel | BLOCKED | Unknown: no parallel cap is documented; the 20-destination figure appears in no source. |
+| B3 | Does an expiring SAT drop an active call? | BLOCKED | Unknown: nothing says an established call drops at SAT expiry. |
+| B4 | Does automatic refresh work (backend refresh vs fingerprint + sat:refresh)? | DOCUMENTED (not observed) | Documented: refresh() is called 5 s before expiry with 5 retries, then TokenRefreshError; sat:refresh enables SDK self-refresh. |
+| B5 | Does deleting a Subscriber revoke active sessions and in-progress calls? | BLOCKED | Unknown: delete returns 204; effect on live sessions and calls is undocumented. |
+| B6 | Can custom data reach the browser on inbound calls? | DOCUMENTED (not observed) | Only userVariables is a documented path; the v4 Call object has no headers property. |
+| B7 | What caller ID does the browser see on inbound, and can connect.from override it? | BLOCKED | Unknown for PSTN callers: from maps to the invite caller_id_number; override behavior undocumented. |
+| B8 | What does the remote party hear during browser hold, and is it recorded? | BLOCKED | Unknown: v4 offers toggleHold(); what the remote party hears is undocumented. |
+| B9 | Can a device on an active call receive a second inbound call? | DOCUMENTED (not observed) | SDK lists every inbound call, including a second one; platform offer behavior unverified. |
+| B10 | Server-side transfer of a connected call to another Subscriber and to a phone number | DOCUMENTED (not observed) | calling.transfer with dest pointing at SWML that connects to the target is the documented method. |
+| B11 | Webhook authenticity: signature header and validation | DOCUMENTED (not observed) | X-SignalWire-Signature = hex HMAC-SHA1(Signing Key, url + raw_body); validator proven against SignalWire's library. |
+| B12 | Webhook reliability: retries and timeouts when the backend is slow or returns 500 | DOCUMENTED (not observed) | About 5 s wait, then fallback_request_url on timeout or 5xx; SWML retry counts are undocumented. |
+| B13 | Recording retention and deletion via API | DOCUMENTED (not observed) | List, get and delete via /api/relay/rest/recordings; retention is indefinite until deleted. |
+| B14 | Outbound CPS: what happens when the default limit is exceeded? | DOCUMENTED (not observed) | Default 1 CPS; excess calls are queued (10,000 backlog), not rejected. |
+| B15 | Negotiated codecs on the WebRTC leg and the PSTN leg | BLOCKED | Unknown: read via call.rtcPeerConnection.getStats(); no codec getter in the SDK. |
+| B16 | Can one Subscriber hold multiple simultaneous connected calls across devices? | BLOCKED | Unknown: concurrent calls per Subscriber are undocumented. |
+| B17 | Can one browser register as two Subscribers? | DOCUMENTED (not observed) | Possible in the SDK with a separate storageImplementation per client; platform acceptance unverified. |
+| B18 | Does connect_result differ between decline, no answer, and no registrations? | DOCUMENTED (not observed) | Documented: connect_result is connected or failed only, so all three cases read failed. |
+| C1 | Is the $3/month Subscriber fee billed per Subscriber created or per Subscriber registered in the period? | NOT DETERMINABLE EMPIRICALLY | Not public: $3.00/month per Subscriber is listed, but the billing basis is not stated. Confirm with Sales. |
+| C2 | How is the outbound CPS limit raised, and to what? | NOT DETERMINABLE EMPIRICALLY | Default 1 CPS; raise via Support, paid tiers $15 to $40/month listed. Confirm ceiling with Sales/Support. |
+| C3 | 911 from browser softphones | NOT DETERMINABLE EMPIRICALLY | Not tested. E911 is per number with a static US address; WebRTC 911 is undocumented. Review with counsel. |
+| C4 | Can numbers ported from Telnyx carry both existing 10DLC campaigns and voice? | NOT DETERMINABLE EMPIRICALLY | Voice ports freely; 10DLC campaigns need re-registration or a CNP change. Confirm with Carrier Ops. |

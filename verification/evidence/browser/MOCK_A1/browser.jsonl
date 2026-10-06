@@ -1,0 +1,54 @@
+{"device": "A1r0-1", "type": "registered", "value": true, "rx_t": 1791300950.568706, "test_id": "MOCK_A1"}
+{"device": "A1r0-2", "type": "registered", "value": true, "rx_t": 1791300950.602107, "test_id": "MOCK_A1"}
+{"device": "A1r0-3", "type": "registered", "value": true, "rx_t": 1791300950.6394286, "test_id": "MOCK_A1"}
+{"device": "A1r0-1", "type": "status", "value": "ringing", "call_id": "c1", "rx_t": 1791300951.1055994, "test_id": "MOCK_A1"}
+{"device": "A1r0-2", "type": "status", "value": "ringing", "call_id": "c1", "rx_t": 1791300951.1648066, "test_id": "MOCK_A1"}
+{"device": "A1r0-3", "type": "status", "value": "ringing", "call_id": "c1", "rx_t": 1791300951.2015533, "test_id": "MOCK_A1"}
+{"device": "A1r1-1", "type": "registered", "value": true, "rx_t": 1791300953.2950842, "test_id": "MOCK_A1"}
+{"device": "A1r1-2", "type": "registered", "value": true, "rx_t": 1791300953.3350964, "test_id": "MOCK_A1"}
+{"device": "A1r1-3", "type": "registered", "value": true, "rx_t": 1791300953.3756528, "test_id": "MOCK_A1"}
+{"device": "A1r1-1", "type": "status", "value": "ringing", "call_id": "c1", "rx_t": 1791300953.8344212, "test_id": "MOCK_A1"}
+{"device": "A1r1-2", "type": "status", "value": "ringing", "call_id": "c1", "rx_t": 1791300953.8901427, "test_id": "MOCK_A1"}
+{"device": "A1r1-3", "type": "status", "value": "ringing", "call_id": "c1", "rx_t": 1791300953.9356327, "test_id": "MOCK_A1"}
+{"device": "A1r2-1", "type": "registered", "value": true, "rx_t": 1791300955.9724445, "test_id": "MOCK_A1"}
+{"device": "A1r2-2", "type": "registered", "value": true, "rx_t": 1791300956.0124662, "test_id": "MOCK_A1"}
+{"device": "A1r2-3", "type": "registered", "value": true, "rx_t": 1791300956.0560617, "test_id": "MOCK_A1"}
+{"device": "A1r2-1", "type": "status", "value": "ringing", "call_id": "c1", "rx_t": 1791300956.5230448, "test_id": "MOCK_A1"}
+{"device": "A1r2-2", "type": "status", "value": "ringing", "call_id": "c1", "rx_t": 1791300956.5546672, "test_id": "MOCK_A1"}
+{"device": "A1r2-3", "type": "status", "value": "ringing", "call_id": "c1", "rx_t": 1791300956.6050851, "test_id": "MOCK_A1"}
+{"device": "A1r0-1", "type": "registered", "value": true, "rx_t": 1791301163.4671974, "test_id": "MOCK_A1"}
+{"device": "A1r0-2", "type": "registered", "value": true, "rx_t": 1791301163.5122104, "test_id": "MOCK_A1"}
+{"device": "A1r0-3", "type": "registered", "value": true, "rx_t": 1791301163.5616236, "test_id": "MOCK_A1"}
+{"device": "A1r0-2", "type": "status", "value": "ringing", "call_id": "c1", "rx_t": 1791301164.1799524, "test_id": "MOCK_A1"}
+{"device": "A1r0-3", "type": "status", "value": "ringing", "call_id": "c1", "rx_t": 1791301164.197367, "test_id": "MOCK_A1"}
+{"device": "A1r0-1", "type": "status", "value": "ringing", "call_id": "c1", "rx_t": 1791301164.1980774, "test_id": "MOCK_A1"}
+{"device": "A1r1-1", "type": "registered", "value": true, "rx_t": 1791301166.2585542, "test_id": "MOCK_A1"}
+{"device": "A1r1-2", "type": "registered", "value": true, "rx_t": 1791301166.3010778, "test_id": "MOCK_A1"}
+{"device": "A1r1-3", "type": "registered", "value": true, "rx_t": 1791301166.344304, "test_id": "MOCK_A1"}
+{"device": "A1r1-1", "type": "status", "value": "ringing", "call_id": "c1", "rx_t": 1791301166.982416, "test_id": "MOCK_A1"}
+{"device": "A1r1-2", "type": "status", "value": "ringing", "call_id": "c1", "rx_t": 1791301166.9915888, "test_id": "MOCK_A1"}
+{"device": "A1r1-3", "type": "status", "value": "ringing", "call_id": "c1", "rx_t": 1791301166.9943237, "test_id": "MOCK_A1"}
+{"device": "A1r2-1", "type": "registered", "value": true, "rx_t": 1791301169.0357113, "test_id": "MOCK_A1"}
+{"device": "A1r2-2", "type": "registered", "value": true, "rx_t": 1791301169.070376, "test_id": "MOCK_A1"}
+{"device": "A1r2-3", "type": "registered", "value": true, "rx_t": 1791301169.109849, "test_id": "MOCK_A1"}
+{"device": "A1r2-1", "type": "status", "value": "ringing", "call_id": "c1", "rx_t": 1791301169.754108, "test_id": "MOCK_A1"}
+{"device": "A1r2-2", "type": "status", "value": "ringing", "call_id": "c1", "rx_t": 1791301169.7587347, "test_id": "MOCK_A1"}
+{"device": "A1r2-3", "type": "status", "value": "ringing", "call_id": "c1", "rx_t": 1791301169.7644892, "test_id": "MOCK_A1"}
+{"device": "A1r0-1", "type": "registered", "value": true, "rx_t": 1791301393.6113126, "test_id": "MOCK_A1"}
+{"device": "A1r0-2", "type": "registered", "value": true, "rx_t": 1791301393.6440988, "test_id": "MOCK_A1"}
+{"device": "A1r0-3", "type": "registered", "value": true, "rx_t": 1791301393.6823432, "test_id": "MOCK_A1"}
+{"device": "A1r0-3", "type": "status", "value": "ringing", "call_id": "c1", "rx_t": 1791301394.3020155, "test_id": "MOCK_A1"}
+{"device": "A1r0-1", "type": "status", "value": "ringing", "call_id": "c1", "rx_t": 1791301394.3200195, "test_id": "MOCK_A1"}
+{"device": "A1r0-2", "type": "status", "value": "ringing", "call_id": "c1", "rx_t": 1791301394.3259542, "test_id": "MOCK_A1"}
+{"device": "A1r1-1", "type": "registered", "value": true, "rx_t": 1791301396.3744059, "test_id": "MOCK_A1"}
+{"device": "A1r1-2", "type": "registered", "value": true, "rx_t": 1791301396.4142468, "test_id": "MOCK_A1"}
+{"device": "A1r1-3", "type": "registered", "value": true, "rx_t": 1791301396.4584744, "test_id": "MOCK_A1"}
+{"device": "A1r1-2", "type": "status", "value": "ringing", "call_id": "c1", "rx_t": 1791301397.1258986, "test_id": "MOCK_A1"}
+{"device": "A1r1-3", "type": "status", "value": "ringing", "call_id": "c1", "rx_t": 1791301397.1382678, "test_id": "MOCK_A1"}
+{"device": "A1r1-1", "type": "status", "value": "ringing", "call_id": "c1", "rx_t": 1791301397.138923, "test_id": "MOCK_A1"}
+{"device": "A1r2-1", "type": "registered", "value": true, "rx_t": 1791301399.2001188, "test_id": "MOCK_A1"}
+{"device": "A1r2-2", "type": "registered", "value": true, "rx_t": 1791301399.241514, "test_id": "MOCK_A1"}
+{"device": "A1r2-3", "type": "registered", "value": true, "rx_t": 1791301399.2832267, "test_id": "MOCK_A1"}
+{"device": "A1r2-2", "type": "status", "value": "ringing", "call_id": "c1", "rx_t": 1791301399.9196894, "test_id": "MOCK_A1"}
+{"device": "A1r2-1", "type": "status", "value": "ringing", "call_id": "c1", "rx_t": 1791301399.9247174, "test_id": "MOCK_A1"}
+{"device": "A1r2-3", "type": "status", "value": "ringing", "call_id": "c1", "rx_t": 1791301399.925311, "test_id": "MOCK_A1"}

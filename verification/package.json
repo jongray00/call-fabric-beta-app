@@ -1,0 +1,8 @@
+{
+  "name": "salesgodcrm-calling-verification",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@signalwire/js": "4.0.0-rc.4"
+  }
+}

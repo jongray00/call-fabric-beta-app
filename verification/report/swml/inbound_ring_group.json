@@ -1,0 +1,71 @@
+{
+  "version": "1.0.0",
+  "sections": {
+    "main": [
+      {
+        "connect": {
+          "parallel": [
+            {
+              "to": "/private/<subscriber-1>"
+            },
+            {
+              "to": "/private/<subscriber-2>"
+            }
+          ],
+          "timeout": 20,
+          "status_url": "https://<backend>/hook/connect",
+          "call_state_url": "https://<backend>/hook/callstate",
+          "call_state_events": [
+            "created",
+            "ringing",
+            "answered",
+            "ended"
+          ],
+          "result": {
+            "case": {
+              "connected": [
+                {
+                  "hangup": {}
+                }
+              ]
+            },
+            "default": [
+              {
+                "execute": {
+                  "dest": "voicemail"
+                }
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "voicemail": [
+      {
+        "play": {
+          "url": "say:Please leave a message after the tone."
+        }
+      },
+      {
+        "record": {
+          "format": "mp3",
+          "beep": true,
+          "end_silence_timeout": 3,
+          "max_length": 120
+        }
+      },
+      {
+        "request": {
+          "url": "https://<backend>/hook/voicemail",
+          "method": "POST",
+          "body": {
+            "recording": "%{record_url}"
+          }
+        }
+      },
+      {
+        "hangup": {}
+      }
+    ]
+  }
+}

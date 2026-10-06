@@ -1,0 +1,368 @@
+{
+  "_meta": {
+    "generated_at": "2026-10-06T15:21:41Z",
+    "method": "SignalWire_Knowledge MCP (start_here, search, get_swml reference/cheatsheet/schema, swml_schema). WebFetch of https://signalwire.com/docs/llms.txt blocked (EGRESS_BLOCKED). No developer.signalwire.com sources used.",
+    "evidence_dir": "verification/evidence/docs/swml/"
+  },
+  "1_connect": {
+    "answer": "connect accepts exactly one dial algorithm: to (single), serial (array), parallel (array) or serial_parallel (array of arrays; outer serial, inner parallel). Destinations can be E.164 numbers, sip: URIs, Resource Addresses like /public/name or /private/name, queue:name, or stream:wss://. Top-level props: from, from_name, headers (array of {name,value}, SIP only), codecs, webrtc_media, encryption, session_timeout, timeout (default 60), max_duration (schema default 14400), answer_on_bridge (default false), ringback, confirm, confirm_timeout, call_state_url, call_state_events (default [ended]), status_url, result, plus transfer_after_bridge in schema. Per-destination from/from_name/timeout/call_state_url/etc override top level. connect_result is connected or failed; return_value equals connect_result; connect_failed_reason is a free-form 'detailed reason' with no enumerated values. No maximum parallel destination count is documented (schema has no maxItems; a limit of 20 is not documented). call_state_url posts event_type calling.call.state; status_url posts event_type calling.call.connect.",
+    "exact_fields": [
+      "connect.to",
+      "connect.serial",
+      "connect.parallel",
+      "connect.serial_parallel",
+      "connect.from",
+      "connect.from_name",
+      "connect.headers[].name",
+      "connect.headers[].value",
+      "connect.codecs",
+      "connect.webrtc_media",
+      "connect.encryption",
+      "connect.session_timeout",
+      "connect.timeout",
+      "connect.max_duration",
+      "connect.answer_on_bridge",
+      "connect.ringback",
+      "connect.confirm",
+      "connect.confirm_timeout",
+      "connect.call_state_url",
+      "connect.call_state_events",
+      "connect.status_url",
+      "connect.result",
+      "connect.username",
+      "connect.password",
+      "transfer_after_bridge (schema only)",
+      "connect_result",
+      "connect_failed_reason",
+      "return_value",
+      "call_state_url payload: event_type (calling.call.state), event_channel, timestamp, project_id, space_id, params.call_id, params.node_id, params.call_state (created|ringing|answered|ended), params.direction, params.device.type, params.device.params.from_number, params.device.params.to_number, params.end_reason (hangup|busy|no_answer|cancel|declined|error)",
+      "status_url payload: event_type (calling.call.connect), event_channel, timestamp, project_id, space_id, params.call_id, params.node_id, params.segment_id, params.tag, params.connect_state (connecting|connected|failed|disconnected), params.failed_reason, params.peer.call_id, params.peer.tag, params.peer.node_id, params.peer.queue_id, params.peer.queue_name, params.peer.device"
+    ],
+    "quotes": [
+      "connect_result:** (out) `connected` | `failed`.",
+      "connect_failed_reason:** (out) Detailed reason for failure.",
+      "return_value:** (out) Same value as `connect_result`.",
+      "`connect.headers` (object[]): Custom SIP headers to add to INVITE. Has no effect on calls to phone numbers.",
+      "`connect.answer_on_bridge` (boolean): Delay answer until the B-leg answers.",
+      "`connect.max_duration` (integer): Maximum duration, in seconds, allowed for the call.",
+      "`connect.from` (string): Caller ID number. Optional. Can be overwritten on each destination.",
+      "\"max_duration\": ... \"default\": 14400 ... \"Maximum duration, in seconds, allowed for the call.\\nDefault is `14400` seconds.\" (schema)",
+      "\"timeout\": ... \"default\": 60 ... \"Time, in seconds, to wait for the call to be answered.\\nDefault is 60 seconds.\" (schema)",
+      "\"parallel\": {\"type\": \"array\", \"items\": {\"$ref\": \"#/$defs/ConnectDeviceSingle\"}, \"description\": \"Array of destinations to dial simultaneously.\"} (schema, no maxItems)",
+      "`serial_parallel[][].to` (string, required): Destination to dial. Can be: - Phone number in E.164 format (e.g., `+15552345678`) - SIP URI (e.g., `sip:alice@example.com`) - Resource Address (e.g., `/public/test_room`) - Queue (e.g., `queue:support`) - WebSocket stream (e.g., `stream:wss://example.com/audio`)",
+      "A POST request will be sent to `call_state_url` with a JSON payload when the call state changes. Only events listed in `call_state_events` will be sent (default: `ended`).",
+      "`params.end_reason` (string): The reason the call ended (only present when `call_state` is `ended`). **Valid values:** `hangup`, `busy`, `no_answer`, `cancel`, `declined`, `error`.",
+      "`event_type` (string): The type of event. Always `calling.call.connect` for connect status events.",
+      "`params.failed_reason` (string): The reason the connection failed. Only present when `connect_state` is `failed`.",
+      "a Subscriber named `Bob` in the `private` context is reachable at `/private/bob`, or, from within that context, just `/bob`."
+    ],
+    "sources": [
+      "docs/swml/public_swml_connect.md (https://signalwire.com/docs/swml/reference/calling/connect)",
+      "docs/swml/mcp_swml_schema_connect_record.md (get_swml schema)",
+      "docs/swml/mcp_get_swml_reference_excerpts.md (get_swml reference, connect section)",
+      "docs/swml/mcp_get_swml_cheatsheet.md",
+      "docs/swml/public_resource_addresses.md (https://signalwire.com/docs/platform/glossary)"
+    ],
+    "gaps": [
+      "Maximum number of parallel destinations: not documented in sources searched (connect page chunks, SWML JSON schema grep for maxItems = 0 hits, internal reference, cheatsheet, queries 'connect parallel destinations limit maximum 10 20'). The figure 20 is not documented. (Only cXML <Dial> documents 'up to 10 <Sip>s within a <Dial>', which is a different product.)",
+      "connect_failed_reason enumerated values: not documented in sources searched; only 'Detailed reason for failure'. Related enumerations that are documented elsewhere: call_state_url params.end_reason (hangup|busy|no_answer|cancel|declined|error) and RELAY end reasons (hangup, cancel, busy, noAnswer, decline, error, abandoned, max_duration, not_found). Do not assume these equal connect_failed_reason.",
+      "status_url on connect: public page documents it, but the SWML JSON schema connect device defs do not list a top-level status_url property (only call_state_url); validators using the schema may reject it.",
+      "A 'fabric:' URI scheme for SWML connect.to is not documented; Resource Addresses are written as /context/name. ('fabric' appears only as a RELAY device type.)",
+      "Whether headers apply to Resource Address (WebRTC subscriber) destinations is not documented; docs say only 'Has no effect on calls to phone numbers'."
+    ]
+  },
+  "2_switch_cond_voicemail": {
+    "answer": "connect.result is a switch on return_value (=connect_result) when an object, or a cond when an array; ConnectSwitch.variable defaults to connect_result. Standalone switch takes variable, case, default. cond is an array of {when, then} plus optional {else}. Documented voicemail pattern: connect with result.case.connected [hangup], default [execute voicemail, hangup]. record (foreground, 'recording for voicemails') sets record_url and record_result; example plays it back with play %{record_url}.",
+    "exact_fields": [
+      "connect.result.case",
+      "connect.result.default",
+      "switch.variable",
+      "switch.case",
+      "switch.default",
+      "cond[].when",
+      "cond[].then",
+      "cond[].else",
+      "record.beep",
+      "record.format",
+      "record.stereo",
+      "record.direction",
+      "record.terminators",
+      "record.initial_timeout",
+      "record.end_silence_timeout",
+      "record.max_length",
+      "record.status_url",
+      "record_url",
+      "record_result"
+    ],
+    "quotes": [
+      "\"variable\": {\"type\": \"string\", \"examples\": [\"connect_result\"], \"description\": \"Name of the variable whose value needs to be compared. If not provided, it will check the `connect_result` variable.\"} (schema ConnectSwitch)",
+      "**result:** Optional `switch` on `return_value` when object `{}` or `cond` when array `[]`",
+      "##### JSON, Dial single phone number, go to voicemail on failure ... \"result\": { \"case\": { \"connected\": [ \"hangup\" ] }, \"default\": [ { \"execute\": \"voicemail\" }, \"hangup\" ] }",
+      "Record call audio in foreground. This is recording for voicemails.",
+      "- **record_url:** (out) the URL of the newly created recording",
+      "- **record_result:** (out) success | failed"
+    ],
+    "sources": [
+      "docs/swml/mcp_get_swml_reference_excerpts.md",
+      "docs/swml/mcp_swml_schema_connect_record.md",
+      "docs/swml/mcp_get_swml_cheatsheet.md",
+      "docs/swml/public_swml_connect.md"
+    ],
+    "gaps": [
+      "Cheatsheet lists record output var record_duration; the reference and public pages searched list only record_url and record_result. Treat record_duration as unconfirmed.",
+      "A full end-to-end voicemail recipe (greeting wav + beep + record + store) was not found as a public doc page; the pattern is assembled from connect.result example and record example.",
+      "Cheatsheet record.direction comment says 'speak, hear, both'; internal reference says speak/hear (record default speak); public record_call page says speak/listen/both. Value spelling for record (not record_call) 'listen' vs 'hear' is inconsistent across sources."
+    ]
+  },
+  "3_record_call": {
+    "answer": "record_call (background) props: control_id, stereo (default false), format wav|mp3|mp4 (default wav), direction speak|listen|both (default both), terminators, beep (default false), input_sensitivity, initial_timeout, end_silence_timeout, max_length, status_url. Sets record_call_url, record_call_result (success|failed), record_control_id. stop_record_call takes control_id (optional; default stops last started) and sets stop_record_call_result. status_url posts event_type calling.call.record with params.state recording|paused|finished|no_input|error and url, recording_id, duration, size, start_time, end_time, first_frame_time, segment_id, record.audio.{format,direction,stereo}.",
+    "exact_fields": [
+      "record_call.control_id",
+      "record_call.stereo",
+      "record_call.format",
+      "record_call.direction",
+      "record_call.terminators",
+      "record_call.beep",
+      "record_call.input_sensitivity",
+      "record_call.initial_timeout",
+      "record_call.end_silence_timeout",
+      "record_call.max_length",
+      "record_call.status_url",
+      "record_call_url",
+      "record_call_result",
+      "record_control_id",
+      "stop_record_call.control_id",
+      "stop_record_call_result",
+      "event_type=calling.call.record",
+      "event_channel",
+      "timestamp",
+      "project_id",
+      "space_id",
+      "params.call_id",
+      "params.node_id",
+      "params.control_id",
+      "params.state",
+      "params.url",
+      "params.recording_id",
+      "params.duration",
+      "params.size",
+      "params.start_time",
+      "params.end_time",
+      "params.first_frame_time",
+      "params.pause_behavior",
+      "params.segment_id",
+      "params.record.audio.format",
+      "params.record.audio.direction",
+      "params.record.audio.stereo"
+    ],
+    "quotes": [
+      "`record_call.format` (string): Format (`\"wav\"`, `\"mp3\"`, or `\"mp4\"`)",
+      "`record_call.direction` (string): Direction of the audio to record: `\"speak\"` for what party says, `\"listen\"` for what party hears, `\"both\"` for what the party hears and says",
+      "`params.state` (string): The current recording state. **Valid values:** `recording`, `paused`, `finished`, `no_input`, `error`.",
+      "The `finished` event has `params.url`, `params.duration`, and `params.size`. `params.recording_id` matches the `id` the Recordings API returns.",
+      "- **control_id:** String, Optional ID of the recording to stop. If not set, the last recording started will be stopped."
+    ],
+    "sources": [
+      "docs/swml/public_swml_record_call.md (https://signalwire.com/docs/swml/reference/calling/record-call, https://signalwire.com/docs/platform/voice/record-calls)",
+      "docs/swml/mcp_swml_schema_connect_record.md",
+      "docs/swml/mcp_get_swml_reference_excerpts.md"
+    ],
+    "gaps": [
+      "Which channel is which in a stereo recording (caller vs callee, left vs right) is not documented in sources searched.",
+      "Whether record_call started on the A-leg before connect keeps recording the bridged B-leg audio is not explicitly documented."
+    ]
+  },
+  "4_play_answer_hangup_transfer_execute": {
+    "answer": "play: url or urls; schemes http(s):// audio file, say:, silence:<seconds>, ring:<duration>:<country>; volume -40..40; loop (default 1, 0 = loop until call ends or play stopped); say_voice/say_language/say_gender; auto_answer; status_url (event calling.call.play, params.state playing|paused|finished|error). answer: max_duration (min 7, default 14400), codecs. hangup: reason hangup|busy|decline (internal reference says default busy). transfer: dest (URL, sends HTTP POST) + params; tail call, does not return. execute: dest (section label or URL), params, result (switch/cond on return_value), on_return; subroutine returns via return.",
+    "exact_fields": [
+      "play.url",
+      "play.urls",
+      "play.volume",
+      "play.loop",
+      "play.say_voice",
+      "play.say_language",
+      "play.say_gender",
+      "play.auto_answer",
+      "play.status_url",
+      "answer.max_duration",
+      "answer.codecs",
+      "hangup.reason",
+      "transfer.dest",
+      "transfer.params",
+      "execute.dest",
+      "execute.params",
+      "execute.result",
+      "execute.on_return",
+      "return",
+      "return_value"
+    ],
+    "quotes": [
+      "- **`loop:`** Number, Optional number of times to play the file(s). Default 1. 0 will loop until the call ends or the play is stopped.",
+      "- **`silence:<duration>`** - seconds of silence to play",
+      "- **max_duration:** Optional maximum duration in seconds. Can not be less than 7 seconds. Default is 14400 seconds (4 hours).",
+      "- **reason:** Optional hangup reason (hangup, busy, decline). Default is busy.",
+      "- **`https://<URL>`** - URL to fetch next document from. Sends HTTP POST",
+      "Execute a section or URL as a subroutine and return back to current document."
+    ],
+    "sources": [
+      "docs/swml/mcp_get_swml_reference_excerpts.md",
+      "docs/swml/mcp_get_swml_cheatsheet.md",
+      "docs/swml/public_swml_calling_webhook_payload.md"
+    ],
+    "gaps": [
+      "hangup default reason 'busy' comes from the internal reference only; public hangup page was not retrieved. Verify before relying on it.",
+      "Supported wav encodings/sample rates for play URLs: not documented in sources searched."
+    ]
+  },
+  "5_external_swml_webhook_request": {
+    "answer": "SignalWire sends HTTP POST with a JSON body to the External URL (Primary Script URL / primary_request_url), and on failure to fallback_request_url with the same payload. Body top-level keys: call, vars, envs, params (params empty {} on the initial inbound fetch; vars not in the initial inbound payload). call fields: call_id, call_state, direction (inbound|outbound), from, to, headers[] {name,value}, node_id, project_id, segment_id, space_id, type (sip|phone|webrtc), sip_data (sip only). Response must be application/json, application/yaml or text/x-yaml. primary_request_method / fallback_request_method exist (fallback GET or POST).",
+    "exact_fields": [
+      "call.call_id",
+      "call.call_state",
+      "call.direction",
+      "call.from",
+      "call.to",
+      "call.headers[].name",
+      "call.headers[].value",
+      "call.node_id",
+      "call.project_id",
+      "call.segment_id",
+      "call.space_id",
+      "call.type",
+      "call.sip_data.*",
+      "params",
+      "vars",
+      "envs",
+      "primary_request_url",
+      "primary_request_method",
+      "fallback_request_url",
+      "fallback_request_method"
+    ],
+    "quotes": [
+      "`call.from` (string): The number/URI that initiated this call.",
+      "`call.type` (string): The type of call. Possible values: `sip`, `phone`, `webrtc`.",
+      "`params` (object): Parameters passed by the calling `execute` or `transfer` step. Empty `{}` on the initial inbound fetch.",
+      "`vars` (object): Runtime variable scope, populated by methods as the script executes. **Not part of the initial inbound payload**",
+      "The `raw_body` is the JSON payload exactly as sent ... the object containing `call` (or `message` for a messaging document), `vars`, `envs`, and, when the document was reached through `execute` or `transfer`, `params`.",
+      "Your server must respond with a valid SWML document using one of these content types: `application/json`, `application/yaml`, or `text/x-yaml`.",
+      "`fallback_request_url` (string): Fallback URL SignalWire fetches the SWML document from if the primary URL fails. Receives the same payload as `primary_request_url`"
+    ],
+    "sources": [
+      "docs/swml/public_swml_calling_webhook_payload.md (https://signalwire.com/docs/swml/reference/calling)",
+      "docs/swml/public_swml_webhook_security.md",
+      "docs/swml/public_swml_webhook_reliability.md",
+      "docs/swml/public_platform_webhooks.md"
+    ],
+    "gaps": [
+      "Which field identifies the calling Subscriber when a browser Subscriber dials an address: not documented in sources searched. Docs only say call.from is 'The number/URI that initiated this call' and call.type can be 'webrtc'; no example shows call.from for a subscriber (e.g. whether it is /private/name, an email, a subscriber id, or a fabric URI). Must be captured empirically.",
+      "call.from_number, call.caller_id_name, call.caller_id_number: not documented for SWML fetch payload (from_number appears only inside call_state_url params.device.params).",
+      "vars.userVariables: appears only in SDK SWAIG function payload examples (signalwire-python cli_guide), not in the SWML document-fetch payload docs. Not documented for SWML fetch.",
+      "An 'envelope' wrapper field: not documented in sources searched.",
+      "Shape of envs object (keys) not documented in chunks retrieved.",
+      "Full verbatim example payload from the public inbound-call-webhook reference (/docs/apis/rest/webhooks/inbound-call-webhook) was not retrievable; only an older internal example (mcp get_swml reference) with call.state, call.type=sip, from/to as sip: URIs."
+    ]
+  },
+  "6_webhook_signature": {
+    "answer": "Key = project Signing Key from Dashboard API Credentials (per project), not the API token. For SWML document fetches (JSON): X-Signalwire-Signature = hex(HMAC-SHA1(signing_key, url + raw_body)) sent on every signed request; X-Signalwire-SHA256-Signature = hex(HMAC-SHA256(signing_key, url + raw_body)) sent on call requests. url is the full requested URL incl. query string; for call requests embedded basic-auth credentials are stripped before signing. No separator; raw body bytes. Compatibility/cXML form posts: base64 HMAC-SHA1 over URL + sorted form param name+value pairs (validator tries with and without default port; bodySHA256 query param for JSON posts). X-Twilio-Signature accepted by SDK validators in place of X-SignalWire-Signature. Helpers: @signalwire/compatibility-api RestClient.validateRequest(signingKey, signature, url, body); @signalwire/js validateRequest(...) with raw body; Python signalwire.core.security validate_webhook_signature(signing_key, signature, url, raw_body), validate_webhook_signature_sha256, legacy validate_request(signing_key, signature, url, params_or_raw_body); TypeScript @signalwire/sdk webhookValidationMiddleware, validateWebhookSignature, validateWebhookSignatureSha256, validateRequest.",
+    "exact_fields": [
+      "X-Signalwire-Signature",
+      "X-Signalwire-SHA256-Signature",
+      "X-Twilio-Signature (accepted alias in SDK validators)",
+      "bodySHA256 (query param, compat JSON posts)",
+      "Signing Key"
+    ],
+    "quotes": [
+      "| `X-Signalwire-Signature` | HMAC-SHA1, hex encoded | Every signed request |",
+      "| `X-Signalwire-SHA256-Signature` | HMAC-SHA256, hex encoded | Call requests |",
+      "Both are computed over the same string: the request URL concatenated directly with the raw request body, with no separator.",
+      "signature = hex( HMAC( signing_key, url + raw_body ) )",
+      "A call request signs that URL without any basic auth credentials you embedded in it; a message request signs it exactly as you configured it, credentials included.",
+      "**Scheme B: form-encoded requests** (cXML and other compatibility endpoints). The form parameters are sorted by name, and each name and value is appended to the URL; a repeated name keeps its values in their original order. The signature is the standard base64 HMAC-SHA1 of that string.",
+      "The key was just rotated.** A new key needs about a minute to become active."
+    ],
+    "sources": [
+      "docs/swml/public_swml_webhook_security.md (https://signalwire.com/docs/swml/guides/webhook-security)",
+      "docs/swml/public_platform_webhooks.md (https://signalwire.com/docs/platform/webhooks)",
+      "docs/swml/public_compat_webhooks_timeouts_retries.md",
+      "docs/swml/sdk_webhook_signature_validation.md"
+    ],
+    "gaps": [
+      "Header name casing differs across docs: X-Signalwire-Signature / X-Signalwire-SHA256-Signature (SWML guide) vs X-SignalWire-Signature / X-SignalWire-Sha256-Signature (SDK docs). HTTP headers are case-insensitive; read them case-insensitively.",
+      "Whether call_state_url / status_url / record_call status callbacks carry the SHA256 header (vs SHA1 only) is not stated explicitly for SWML status callbacks; Python SDK docs say every outbound webhook incl. RELAY async events is signed.",
+      "Signature behavior when the Resource URL includes a URL fragment (#ot=...) not documented."
+    ]
+  },
+  "7_webhook_reliability": {
+    "answer": "SWML External URL resources have a primary URL and an optional fallback URL (fallback_request_url / fallback_request_method GET|POST). Server SDK guide: fallback triggers on connection timeout, HTTP 5xx, invalid SWML response; SignalWire waits about 5 seconds for SWML. Failure surfaces as SWML error http_retrieval_error. Retry counts for SWML document fetch are not documented. Compatibility API (cXML) documents 2 s connect / 5 s read timeouts, URL fragment overrides ot/rt/tt, action webhooks not retried but go to fallback, status callbacks retried up to 2 more times (3 total); these are cXML-specific.",
+    "exact_fields": [
+      "primary_request_url",
+      "primary_request_method",
+      "fallback_request_url",
+      "fallback_request_method",
+      "http_retrieval_error",
+      "url_failed_to_parse"
+    ],
+    "quotes": [
+      "**Fallback triggers on:** - Connection timeout - HTTP 5xx errors - Invalid SWML response",
+      "SignalWire waits ~5 seconds for SWML",
+      "`http_retrieval_error` (string): The attempt to retrieve the SWML document timed out or failed.",
+      "Our current timeouts are 2 seconds for Connect and 5 seconds for Read. (Compatibility API)",
+      "If it's a status callback webhook, SignalWire will retry up to two more times (Compatibility API; original text uses an em-dash before 'three attempts in total')"
+    ],
+    "sources": [
+      "docs/swml/public_swml_webhook_reliability.md",
+      "docs/swml/public_compat_webhooks_timeouts_retries.md",
+      "docs/swml/public_swml_webhook_security.md"
+    ],
+    "gaps": [
+      "Retry policy (count/backoff) for SWML document fetch on 5xx or timeout: not documented in sources searched; only fallback behavior.",
+      "Retry policy for SWML status callbacks (call_state_url, connect status_url, record_call status_url): not documented for SWML; only cXML status callback retries are documented.",
+      "Exact SWML fetch timeout is '~5 seconds' (approximate, Server SDK troubleshooting page); no authoritative connect/read split for SWML.",
+      "Whether 4xx responses trigger fallback: not documented.",
+      "Whether cXML URL-fragment timeout overrides (#ot=, #rt=, #tt=) apply to SWML URLs: not documented."
+    ]
+  },
+  "8_caller_id_to_subscriber": {
+    "answer": "connect.from sets the caller ID number on the outbound leg ('Default is calling party caller ID number' per internal reference), overridable per destination; from_name applies to SIP only. The forwarding guide shows from: %{call.from} to preserve original caller. What a browser Subscriber's SDK displays as the caller for an inbound call, and whether connect.from overrides it for a Resource Address (/private/name) destination, is not documented.",
+    "exact_fields": [
+      "connect.from",
+      "connect.from_name",
+      "<destination>.from",
+      "<destination>.from_name",
+      "call.from"
+    ],
+    "quotes": [
+      "- **from:** String, Optional. Caller ID number. Default is calling party caller ID number. Can be overwritten on each destination. (internal reference)",
+      "`connect.from_name` (string): The caller ID name shown to the person you're calling, displayed alongside the `from` number (sometimes called CNAM). Applies to SIP calls only",
+      "Notice how we used its `from` parameter to ensure that the number of the original caller (stored in the `call.from` variable) is maintained as caller ID for the forwarded call."
+    ],
+    "sources": [
+      "docs/swml/public_swml_connect.md",
+      "docs/swml/mcp_get_swml_reference_excerpts.md",
+      "docs/swml/public_callerid_and_hold.md"
+    ],
+    "gaps": [
+      "Caller ID presented to a Subscriber/browser on inbound calls: not documented in sources searched (queries: 'incoming call to subscriber caller id displayed browser SDK', 'Browser SDK v4 incoming call ... Call.from').",
+      "Whether connect.from overrides caller ID for Resource Address / WebRTC destinations: not documented; from_name explicitly SIP-only."
+    ]
+  },
+  "9_hold": {
+    "answer": "RELAY server-side call.hold(): 'The remote party hears hold music or silence while the call is held.' Browser SDK exposes call.toggleHold() in examples, but no Browser SDK / Call Fabric doc retrieved states what the remote party hears.",
+    "exact_fields": [
+      "call.toggleHold() (Browser SDK example)",
+      "hold()/unhold() (RELAY server SDK)",
+      "calling.call.hold (RELAY event)"
+    ],
+    "quotes": [
+      "Put the call on hold. The remote party hears hold music or silence while the call is held.",
+      "async function toggleHold(call) { await call.toggleHold(); }"
+    ],
+    "sources": [
+      "docs/swml/public_callerid_and_hold.md (https://signalwire.com/docs/server-sdks/reference/typescript/relay/call/hold, Browser SDK example 06-call-controls)"
+    ],
+    "gaps": [
+      "What the remote party hears when a Browser SDK (Call Fabric) Subscriber puts a call on hold: not documented in sources searched (query 'browser SDK hold call remote party hears music on hold'). RELAY text says 'hold music or silence' without specifying which or how to configure.",
+      "Configurable music-on-hold for Call Fabric / Browser SDK hold: not documented."
+    ]
+  }
+}

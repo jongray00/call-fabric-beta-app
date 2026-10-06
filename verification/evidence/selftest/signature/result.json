@@ -1,0 +1,14 @@
+{
+  "checks": {
+    "sha1_matches_official_build_signature": true,
+    "official_validates_our_sig": true,
+    "our_validator_accepts": true,
+    "sha256_accepted": true,
+    "tampered_body_rejected": true,
+    "wrong_key_rejected": true,
+    "form_matches_official_compat": true
+  },
+  "url": "https://example.trycloudflare.com/swml/inbound?test=B11",
+  "body": "{\"call\": {\"call_id\": \"abc\", \"from\": \"+15615550100\", \"to\": \"+15615550101\"}, \"params\": {}}",
+  "sig": "27c3dcd891099207cf41148c1001fb8f85872652"
+}

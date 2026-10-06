@@ -1,0 +1,297 @@
+{
+  "_meta": {
+    "generated_at": "2026-10-06T15:24:53Z",
+    "method": "SignalWire_Knowledge MCP (start_here, last_resort_search over signalwire_unified_v3 and pricing). WebFetch https://signalwire.com/docs/llms.txt was EGRESS_BLOCKED. No developer.signalwire.com links used. No SupportMCP or account data used."
+  },
+  "1_calling_rest_api": {
+    "answer": "Single endpoint POST https://{space}.signalwire.com/api/calling/calls, HTTP Basic auth project_id:api_token, token needs Voice scope. Body {command, id, params}. Dial and update use command names 'dial' and 'update' (NOT 'calling.dial'/'calling.update') with call details in params and no top-level id; all other commands take top-level id = call UUID. dial params: from, to, and either url (SWML URL) or swml (inline object), plus status_url and status_events (created, ringing, answered, ended; default ended only). Dial returns the call id with status queued. calling.end takes reason (TS SDK: hangup, cancel, busy, noAnswer, decline, error). calling.transfer takes dest (SWML URL or inline doc; SDKs also show SIP URI). calling.record takes control_id plus audio {format wav|mp3|mp4, stereo, direction speak|listen|both, beep} and status_url; control_id is never echoed back. calling.record.pause params {control_id, behavior}, behavior skip (default) or silence. calling.record.resume / calling.record.stop take {control_id}. Commands return immediately; async results go to status_url. Responses 200,400,401,404,422,500; error body has code/message (more_info, status optional); 422 body has errors array.",
+    "exact_endpoints_or_fields": [
+      "POST /api/calling/calls",
+      "command: dial | update | calling.end | calling.transfer | calling.disconnect | calling.record | calling.record.pause | calling.record.resume | calling.record.stop | calling.play | calling.refer | calling.user_event | ...",
+      "dial.params: from, to, url | swml, status_url, status_events[]",
+      "calling.end.params.reason",
+      "calling.transfer.params.dest",
+      "calling.record.params: control_id, audio{format,stereo,direction,beep}, status_url (SDK level)",
+      "calling.record.pause.params: control_id, behavior (skip|silence)",
+      "record status_url payload: event_type calling.call.record, params.state recording|paused|finished|no_input|error, params.url, params.recording_id, params.duration, params.pause_behavior, params.segment_id"
+    ],
+    "quotes": [
+      "For `dial` and `update`, the call details are inside `params` (no top-level `id`). For all other commands, `id` is the UUID of the call to control.",
+      "All commands are sent over HTTP (no persistent WebSocket connection required) and return immediately; operations that continue asynchronously deliver their results to your `status_url` webhooks.",
+      "Pausing takes an optional `behavior`. The default, `skip`, leaves the paused span out of the file entirely; `silence` replaces it with silence, so the recording's timing still lines up with the call.",
+      "{\"command\": \"calling.record.pause\", \"id\": \"<YOUR_CALL_ID>\", \"params\": { \"control_id\": \"main\", \"behavior\": \"skip\" }}",
+      "send `calling.record.stop` through the REST Calling API's call commands against any live call.",
+      "The response never carries `control_id` back"
+    ],
+    "sources": [
+      "verification/evidence/docs/rest/calling_api_call_commands.md",
+      "verification/evidence/docs/rest/platform_make_and_receive_calls.md",
+      "verification/evidence/docs/rest/platform_record_calls.md",
+      "verification/evidence/docs/rest/swml_record_call_status_callbacks.md",
+      "verification/evidence/docs/rest/apis_error_codes.md",
+      "https://signalwire.com/docs/apis/rest/calls/call-commands (via api_spec_signalwire_rest.json)",
+      "https://signalwire.com/docs/platform/voice/record-calls"
+    ],
+    "gaps": [
+      "'Anchor leg' rule (which call_id commands must target on bridged/connected calls): not documented in sources searched (queries: 'anchor leg call commands must target', 'REST call command on the B-leg of a connect'). Only related text: calling.disconnect 'separates them without ending either leg'.",
+      "Exact wire nesting for calling.record params (params.audio vs params.record.audio) not shown verbatim in any REST cURL example found; SDKs pass control_id + audio.",
+      "Exact success response JSON shape for each command not retrieved (only 'call id with status queued' for dial).",
+      "Per-command error codes beyond HTTP status not documented in sources searched.",
+      "No 'calling.dial' or 'calling.update' command exists in the documented list."
+    ]
+  },
+  "2_fabric_subscribers": {
+    "answer": "Create POST /api/fabric/resources/subscribers (email required; password optional, random default; first_name, last_name, display_name, job_title, timezone, country, company_name). List GET /api/fabric/resources/subscribers. Delete DELETE /api/fabric/resources/subscribers/{id} -> 204. SAT: POST /api/fabric/subscribers/tokens with Basic auth; reference required; expire_at unix seconds default 2 hours; application_id, password, fingerprint, scope (sat:refresh), profile fields, region. Refresh: POST /api/fabric/subscribers/tokens/refresh with refresh_token, returns new SAT (2h) and new refresh token (2h5m), consumes old one. Guest: POST /api/fabric/guests/tokens with allowed_addresses (up to 10 UUIDs), default 2h.",
+    "exact_endpoints_or_fields": [
+      "POST /api/fabric/resources/subscribers {email*, password, first_name, last_name, display_name, job_title, timezone, country, company_name}",
+      "GET /api/fabric/resources/subscribers",
+      "DELETE /api/fabric/resources/subscribers/{id}",
+      "GET /api/fabric/resources/subscribers/{id}/addresses",
+      "POST /api/fabric/subscribers/tokens {reference*, expire_at, application_id, password, fingerprint, scope, first_name, last_name, display_name, job_title, time_zone, country, region, company_name}",
+      "POST /api/fabric/subscribers/tokens/refresh {refresh_token*}",
+      "POST /api/fabric/guests/tokens {allowed_addresses*(<=10), expire_at, region, ch}",
+      "GET /api/fabric/subscriber/info"
+    ],
+    "quotes": [
+      "Tokens expire after two hours by default; bind one to a client with `fingerprint` and `sat:refresh` when that client should refresh its own access",
+      "The new access token is valid for 2 hours, and the new refresh token is valid for 2 hours and 5 minutes.",
+      "This operation consumes the `refresh_token` returned by Create Subscriber token.",
+      "temporary Guest and Invite Tokens expire independently and are not deleted through this operation.",
+      "List of up to 10 UUIDs representing the allowed Fabric addresses.",
+      "Bearer tokens expire. Once they do, requests return `401 Unauthorized`"
+    ],
+    "sources": [
+      "verification/evidence/docs/rest/fabric_subscribers_and_tokens.md",
+      "https://signalwire.com/docs/apis/authorization",
+      "api_spec_signalwire_rest.json (Subscribers, Subscriber Tokens)"
+    ],
+    "gaps": [
+      "Create-token response field names (token, refresh_token) not shown verbatim in the spec excerpt; refresh_token existence is implied by the refresh endpoint text. SDK examples read `token.token`.",
+      "Minimum and maximum expire_at not documented in sources searched; only default (2h).",
+      "Effect of subscriber deletion on live sessions/registrations: not documented publicly.",
+      "Max devices/sessions per subscriber: not documented in sources searched.",
+      "Guest token auth: authorization page says create from a SAT (Bearer), API spec says use project API token; conflicting."
+    ]
+  },
+  "3_fabric_resources_and_routing": {
+    "answer": "SWML webhook resource: POST /api/fabric/resources/swml_webhooks {name, used_for, primary_request_url*, primary_request_method, fallback_request_url, fallback_request_method, status_callback_url, status_callback_method}. SWML script: POST /api/fabric/resources/swml_scripts. Addresses live in contexts: public (anyone) and private (authenticated, home of Subscribers); REST dials need full /<context>/<name>. Phone number binding is done on the phone number: call_handler=relay_script + call_relay_script_url (auto-creates swml_webhook resource); calling_handler_resource_id is server-derived and read-only. call_request_url belongs to laml_webhooks (cXML), not SWML. Beta alternative: POST /api/fabric/phone_number_addresses {phone_number_id|number, resource_id, handler_type calling|messaging}.",
+    "exact_endpoints_or_fields": [
+      "POST /api/fabric/resources/swml_webhooks",
+      "POST /api/fabric/resources/swml_scripts",
+      "GET/POST /api/fabric/resources/external_swml_handlers",
+      "GET /api/fabric/resources/{id}/addresses",
+      "GET/POST /api/fabric/addresses/alias {context*, display_name*, name*, resource_id*, channels, codecs, type}",
+      "GET /api/fabric/addresses (SAT)",
+      "PUT /api/relay/rest/phone_numbers/{id} {call_handler: relay_script, call_relay_script_url}",
+      "call_handler values: relay_script, laml_webhooks, laml_application, ai_agent, call_flow, relay_application, relay_topic, relay_context, video_room, dialogflow",
+      "POST /api/fabric/phone_number_addresses (beta)"
+    ],
+    "quotes": [
+      "`public` Addresses are reachable by anyone, including unauthenticated callers.",
+      "`private` Addresses are reachable only by authenticated users, which makes them the home of Subscribers",
+      "REST dials and SWML `connect` need the full `/<context>/<name>`.",
+      "`calling_handler_resource_id` (where present in responses) is server-derived and read-only.",
+      "`swml_webhook` and `cxml_webhook` Fabric resources are auto-materialized. Don't manually create them."
+    ],
+    "sources": [
+      "verification/evidence/docs/rest/fabric_resources_swml.md",
+      "verification/evidence/docs/rest/platform_addresses_contexts.md",
+      "verification/evidence/docs/rest/phone_numbers_api.md",
+      "https://signalwire.com/docs/platform/addresses"
+    ],
+    "gaps": [
+      "Update-phone-number API spec body (PUT /api/relay/rest/phone_numbers/{id}) not retrieved verbatim; handler enum comes from SDK phone-binding docs and the legacy SIP endpoint spec which uses the same field names.",
+      "SWML script create body fields beyond name not retrieved."
+    ]
+  },
+  "4_phone_numbers": {
+    "answer": "Search GET /api/relay/rest/phone_numbers/search (areacode, number_type local|toll-free, starts_with|contains|ends_with 3-7 digits, max_results <=100 default 50, region, city). Purchase POST /api/relay/rest/phone_numbers {number E.164}. Update PUT /api/relay/rest/phone_numbers/{id}. Release DELETE /api/relay/rest/phone_numbers/{id} -> 204. Scope: Numbers.",
+    "exact_endpoints_or_fields": [
+      "GET /api/relay/rest/phone_numbers/search?areacode=&number_type=&max_results=",
+      "POST /api/relay/rest/phone_numbers {number}",
+      "PUT /api/relay/rest/phone_numbers/{id}",
+      "DELETE /api/relay/rest/phone_numbers/{id}"
+    ],
+    "quotes": [
+      "Search results are candidates, not numbers your project owns",
+      "`number` (string, required): The phone number in E164 format.",
+      "deleting a handler resource or removing its E911 assignment does not release the number.",
+      "Note: Numbers cannot be released within a cooldown period after purchase. (Compatibility API)"
+    ],
+    "sources": [
+      "verification/evidence/docs/rest/phone_numbers_api.md"
+    ],
+    "gaps": [
+      "Length of release cooldown not documented in sources searched; stated only on Compatibility API delete.",
+      "Whether native DELETE enforces the same cooldown not stated."
+    ]
+  },
+  "5_recordings": {
+    "answer": "Native: GET /api/relay/rest/recordings, GET/DELETE /api/relay/rest/recordings/{id} (Voice scope). Compatibility: GET /api/laml/2010-04-01/Accounts/{project_id}/Recordings, GET/DELETE .../Recordings/{Sid}. recording_id in record status callbacks matches the Recordings API id. Retention: cXML docs say recordings remain stored indefinitely until deleted.",
+    "exact_endpoints_or_fields": [
+      "GET /api/relay/rest/recordings",
+      "GET /api/relay/rest/recordings/{id}",
+      "DELETE /api/relay/rest/recordings/{id}",
+      "GET /api/laml/2010-04-01/Accounts/{pid}/Recordings?CallSid=&PageSize=",
+      "DELETE /api/laml/2010-04-01/Accounts/{pid}/Recordings/{Sid}"
+    ],
+    "quotes": [
+      "Recordings remain stored indefinitely. To delete a recording, use the appropriate API call from the Compatibility API.",
+      "Permanently deletes one voice call recording by ID.",
+      "`params.recording_id` (string): ID of the recording, matching the `id` returned by the Recordings API."
+    ],
+    "sources": [
+      "verification/evidence/docs/rest/recordings_api.md",
+      "verification/evidence/docs/rest/swml_record_call_status_callbacks.md"
+    ],
+    "gaps": [
+      "No /api/voice/recordings endpoint found; do not use it.",
+      "Retention statement found only on the cXML Record page; not restated for native/SWML recordings.",
+      "Recording list filter params for native endpoint not documented in excerpt."
+    ]
+  },
+  "6_logs_and_cost": {
+    "answer": "GET /api/voice/logs (params include_deleted, created_before/on/after, page_number, page_size default 50 max 1000, page_token), GET /api/voice/logs/{id} (id = segment_id), GET /api/voice/logs/{id}/events. Described as for 'usage reporting, billing review, and troubleshooting'. Conference logs via logs.conferences.list.",
+    "exact_endpoints_or_fields": [
+      "GET /api/voice/logs",
+      "GET /api/voice/logs/{id}",
+      "GET /api/voice/logs/{id}/events",
+      "response: data[] with from, to, duration (SDK example)"
+    ],
+    "quotes": [
+      "Use it for usage reporting, billing review, and troubleshooting, not live call control.",
+      "Unique ID of the log. This is the segment_id you can find in Relay call details"
+    ],
+    "sources": [
+      "verification/evidence/docs/rest/voice_logs_api.md"
+    ],
+    "gaps": [
+      "Response fields charge, charge_details, type: not documented in sources searched (queries: 'voice logs response fields charge charge_details', 'voice log object charge'). Only from/to/duration appear in an SDK example.",
+      "Fabric-specific call logs endpoint: not found.",
+      "Usage/billing API: not found in sources searched."
+    ]
+  },
+  "7_outbound_cps": {
+    "answer": "Default Voice limit 1 CPS, backlog 10,000 queued calls. Over-limit calls are queued, not rejected; when the backlog is full SignalWire stops adding calls. Raise via Support (throughput) or Space Increase Request Form (backlog). Paid CPS tiers $15-$40/month each with 3-month commitment. API POST/PUT/PATCH limit 13800 per 10 s; 429 is the generic rate-limit status.",
+    "exact_endpoints_or_fields": [
+      "Calls: 1 CPS default",
+      "Backlog: 10,000 queued calls",
+      "API: POST/PUT/PATCH 13800 requests / 10 seconds",
+      "HTTP 429 Too Many Requests (generic)"
+    ],
+    "quotes": [
+      "| Calls | `1` call per second (CPS) |",
+      "SignalWire **queues** these messages or calls in the order received.",
+      "When the backlog for calls is full, SignalWire will stop adding additional calls to the Voice queue.",
+      "contact Support to increase calling throughput.",
+      "`429 Too Many Requests` \u2014 you've exceeded a rate limit. Back off and retry."
+    ],
+    "sources": [
+      "verification/evidence/docs/rest/platform_rate_limits.md",
+      "verification/evidence/docs/rest/apis_error_codes.md",
+      "verification/evidence/docs/rest/pricing.md"
+    ],
+    "gaps": [
+      "HTTP status/error code returned by POST /api/calling/calls when the Voice backlog is full: not documented in sources searched (only UI string 'exceeded the maximum allowed number of queued outbound calls').",
+      "Whether 1 CPS applies per Space, per project, or per number not stated (UI string says 'This number')."
+    ]
+  },
+  "8_pricing": {
+    "answer": "Pricing page index (verified 2026-09-04): Subscriber $3.00/month (US/CA, voice and messaging rows); docs say $3/user/month. WebRTC $0.00300/min in and out; SIP $0.00300/min; Local (10DLC) PSTN $0.00660 in / $0.00800 out per min; Toll Free $0.01470 in / $0.00690 out; Cloud Call Recording API $0.00200/min; E911 Service $0.75/month; AI Agent $0.16/min.",
+    "exact_endpoints_or_fields": [
+      "Subscriber $3.00 /month",
+      "WebRTC $0.00300/min",
+      "PSTN Local in $0.00660 out $0.00800",
+      "Recording $0.00200/min",
+      "E911 $0.75/month"
+    ],
+    "quotes": [
+      "| Subscriber | $3.00 |",
+      "**$3/user/month** - No setup fees, hidden costs, or complex calculations.",
+      "| WebRTC | $0.00300 | $0.00300 |",
+      "| Local (10DLC) | $0.00660 | $0.00800 |",
+      "| Cloud Call Recording API | $0.00200 /minute |",
+      "Rates change -- confirm current pricing at https://signalwire.com/pricing/rates before quoting it as a commitment."
+    ],
+    "sources": [
+      "verification/evidence/docs/rest/pricing.md",
+      "https://signalwire.com/pricing/rates (via pricing.json index)",
+      "https://signalwire.com/docs/platform/subscribers"
+    ],
+    "gaps": [
+      "Whether the $3 subscriber fee is billed on creation, per existing subscriber, or per active subscriber: not documented publicly.",
+      "Proration and whether deleted subscribers are still billed: not documented.",
+      "Recording storage price: not found in pricing index.",
+      "US DID monthly price row not retrieved (Canada row: Local $0.50, Toll Free $0.80)."
+    ]
+  },
+  "9_e911": {
+    "answer": "E911 is per phone number, US addresses only: create an E911 address (POST /api/relay/rest/addresses, emergency_enabled validates with carrier) and assign it to a number; status pending then active. No per-call dynamic location: PIDF-LO Geolocation headers are not used; location comes from the registered address, update it when a device moves. Unprovisioned numbers route 911 to a national relay center billed $100 per call (UI string). Nothing found for WebRTC/Subscriber-originated 911 specifically.",
+    "exact_endpoints_or_fields": [
+      "POST /api/relay/rest/addresses {label*, country*, first_name*, last_name*, street_number*, street_name*, city*, state*, postal_code*, address_type, address_number, emergency_enabled, auto_correct_address}",
+      "DELETE /api/relay/rest/addresses/{id}",
+      "assign: /docs/apis/rest/e-911-addresses/assign-e-911-address (path not captured)",
+      "Test: dial 933"
+    ],
+    "quotes": [
+      "E911 is available for US addresses only.",
+      "the number's E911 status starts as `pending` and becomes `active` once the carrier confirms",
+      "On SignalWire, the location a dispatcher receives comes from the emergency address you register and assign to the phone number.",
+      "update the assigned address when a device moves.",
+      "Each of these calls is billed $100."
+    ],
+    "sources": [
+      "verification/evidence/docs/rest/e911.md",
+      "https://signalwire.com/docs/platform/e911",
+      "https://signalwire.com/docs/platform/voice/sip"
+    ],
+    "gaps": [
+      "Kari's Law and RAY BAUM's Act: not mentioned in sources searched.",
+      "E911 for WebRTC/Subscriber/softphone clients (dynamic location, which caller ID a subscriber 911 call presents): not documented in sources searched.",
+      "Exact assign endpoint path not retrieved."
+    ]
+  },
+  "10_porting_and_10dlc": {
+    "answer": "Docs say each messaging provider is its own CSP, so campaigns do not transfer: when migrating from another provider you re-register Brand/Campaign with SignalWire; old registration stays until you request deactivation. Customers who are their own CSP select SignalWire as upstream CNP and submit brand/campaign, then DCA vetting. Port-in is free, via Dashboard port request, about 1 week. Ported numbers then need assignment to a SignalWire campaign.",
+    "exact_endpoints_or_fields": [
+      "Dashboard Phone Numbers > Port Requests",
+      "DELETE /api/relay/rest/registry/beta/numbers/{id} (remove campaign assignment)"
+    ],
+    "quotes": [
+      "Each messaging provider is its own CSP (Campaign Service Provider) and therefore registered uniquely with The Campaign Registry. If you are migrating from another provider, you will need to go through this process again.",
+      "Your registration with your current provider will remain in place until you request campaign deactivation.",
+      "first you must select SignalWire as your upstream Connectivity Partner (CNP)",
+      "Both Local and Toll Free numbers can be ported into SignalWire for no charge."
+    ],
+    "sources": [
+      "verification/evidence/docs/rest/porting_and_10dlc.md"
+    ],
+    "gaps": [
+      "A TCR CNP-migration path that keeps an existing campaign ID when moving from another CSP/CNP (e.g. Telnyx) is not documented in sources searched; the FAQ implies re-registration.",
+      "Voice impact during port cutover not documented.",
+      "Porting API endpoints not found (Dashboard only)."
+    ]
+  },
+  "11_webhook_signatures": {
+    "answer": "Header X-SignalWire-Signature (HMAC-SHA1); newer builds also send X-SignalWire-Sha256-Signature. Key is the project Signing Key from Dashboard API Credentials. JSON requests: hex(HMAC(signing_key, url + raw_body)). Form-encoded (cXML): base64 HMAC-SHA1 of URL + sorted params; try with and without default port.",
+    "exact_endpoints_or_fields": [
+      "X-SignalWire-Signature",
+      "X-SignalWire-Sha256-Signature",
+      "X-Twilio-Signature (cXML compat)",
+      "validateRequest(signingKey, signature, url, rawBody)"
+    ],
+    "quotes": [
+      "`X-SignalWire-Signature` carries a SHA-1 signature. Newer platform builds also send `X-SignalWire-Sha256-Signature`",
+      "signature        = hex(HMAC-SHA1(signing_key, url + raw_body))",
+      "SignalWire signs its requests with a digital HMAC security key."
+    ],
+    "sources": [
+      "verification/evidence/docs/rest/webhook_signatures.md",
+      "https://signalwire.com/docs/platform/webhooks",
+      "https://signalwire.com/docs/swml/guides/webhook-security"
+    ],
+    "gaps": [
+      "Algorithm details come from the Python SDK security guide, not the platform webhooks page; whether the Calling API status_url callbacks are signed is stated only in the SDK guide ('RELAY async events')."
+    ]
+  }
+}

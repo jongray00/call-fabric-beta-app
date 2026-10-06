@@ -1,0 +1,618 @@
+{
+  "A1": {
+    "id": "A1",
+    "part": "A",
+    "question": "Does calling one Subscriber ring all of its registered devices?",
+    "doc_answer": "Documented yes. The Server SDK dial reference states that dialing a Subscriber's resource address \"rings every live registration of a subscriber at once\". The Browser SDK side only rings while a device is registered (`register()` marks the Subscriber online). Not yet observed with 3 devices.",
+    "doc_citations": [
+      "evidence/docs/extra/multi_device_and_reject.md",
+      "evidence/sdk/sdk_facts.md (Item 1, register)"
+    ],
+    "status": "DOCUMENTED (not observed)",
+    "answer": "Documented yes. The Server SDK dial reference states that dialing a Subscriber's resource address \"rings every live registration of a subscriber at once\". The Browser SDK side only rings while a device is registered (`register()` marks the Subscriber online). Not yet observed with 3 devices.",
+    "blocked_reason": "Live tests not run. Preflight failed: .env inputs SW_SPACE, SW_PROJECT_ID, SW_API_TOKEN -> missing: ['SW_SPACE', 'SW_PROJECT_ID', 'SW_API_TOKEN']; reach https://signalwire.com/api/relay/rest/phone_numbers -> ProxyError('403 Forbidden'); reach https://signalwire.com/docs/llms.txt -> ProxyError('403 Forbidden'); reach https://api.trycloudflare.com -> ProxyError('403 Forbidden')",
+    "runs": [],
+    "evidence": [
+      "evidence/docs/extra/multi_device_and_reject.md",
+      "evidence/sdk/sdk_facts.md (Item 1, register)"
+    ],
+    "hypothesis": "Calling one Subscriber rings every registered device"
+  },
+  "A2": {
+    "id": "A2",
+    "part": "A",
+    "question": "First-answer-wins: when one device answers, do the others stop ringing, and how fast?",
+    "doc_answer": "Not answered by documentation. The SDK exposes per-call `status$` with values new, trying, ringing, connecting, connected, recovering, disconnecting, disconnected, failed, destroyed, so the harness can time the transition off `ringing` on the other devices, but neither the docs nor the SDK state what the losing devices see or how fast. Needs the live run.",
+    "doc_citations": [
+      "evidence/sdk/sdk_facts.md (Item 2, CallStatus)"
+    ],
+    "status": "BLOCKED",
+    "answer": "Not answered by documentation. The SDK exposes per-call `status$` with values new, trying, ringing, connecting, connected, recovering, disconnecting, disconnected, failed, destroyed, so the harness can time the transition off `ringing` on the other devices, but neither the docs nor the SDK state what the losing devices see or how fast. Needs the live run.",
+    "blocked_reason": "Live tests not run. Preflight failed: .env inputs SW_SPACE, SW_PROJECT_ID, SW_API_TOKEN -> missing: ['SW_SPACE', 'SW_PROJECT_ID', 'SW_API_TOKEN']; reach https://signalwire.com/api/relay/rest/phone_numbers -> ProxyError('403 Forbidden'); reach https://signalwire.com/docs/llms.txt -> ProxyError('403 Forbidden'); reach https://api.trycloudflare.com -> ProxyError('403 Forbidden')",
+    "runs": [],
+    "evidence": [
+      "evidence/sdk/sdk_facts.md (Item 2, CallStatus)"
+    ],
+    "hypothesis": "When one device answers, the other devices leave 'ringing'"
+  },
+  "A3": {
+    "id": "A3",
+    "part": "A",
+    "question": "Does reject() on one device stop all devices on that Subscriber, and other Subscribers in the same parallel group?",
+    "doc_answer": "Not answered by documentation. The reject() reference says \"the caller-side rings stop, no media is negotiated, and the call instance transitions to disconnected\" for the rejecting device, but nothing documents the effect on other devices of the same Subscriber or on other parallel destinations. The backend workaround (calling.end on the anchor leg via REST) uses documented commands; its stop latency needs the live run.",
+    "doc_citations": [
+      "evidence/docs/extra/multi_device_and_reject.md",
+      "evidence/docs/rest_facts.json (1_calling_rest_api)"
+    ],
+    "status": "BLOCKED",
+    "answer": "Not answered by documentation. The reject() reference says \"the caller-side rings stop, no media is negotiated, and the call instance transitions to disconnected\" for the rejecting device, but nothing documents the effect on other devices of the same Subscriber or on other parallel destinations. The backend workaround (calling.end on the anchor leg via REST) uses documented commands; its stop latency needs the live run.",
+    "blocked_reason": "Live tests not run. Preflight failed: .env inputs SW_SPACE, SW_PROJECT_ID, SW_API_TOKEN -> missing: ['SW_SPACE', 'SW_PROJECT_ID', 'SW_API_TOKEN']; reach https://signalwire.com/api/relay/rest/phone_numbers -> ProxyError('403 Forbidden'); reach https://signalwire.com/docs/llms.txt -> ProxyError('403 Forbidden'); reach https://api.trycloudflare.com -> ProxyError('403 Forbidden')",
+    "runs": [],
+    "evidence": [
+      "evidence/docs/extra/multi_device_and_reject.md",
+      "evidence/docs/rest_facts.json (1_calling_rest_api)"
+    ],
+    "hypothesis": "reject() on one device stops ringing on all devices of that Subscriber"
+  },
+  "A4": {
+    "id": "A4",
+    "part": "A",
+    "question": "What does the inbound SWML webhook request contain?",
+    "doc_answer": "Documented: an HTTP POST with a JSON body whose top-level keys are `call`, `vars`, `envs`, `params` (`params` is `{}` on the first inbound fetch). `call` carries `call_id`, `call_state`, `direction`, `from`, `to`, `headers[]`, `node_id`, `project_id`, `segment_id`, `space_id`, `type` (sip, phone, webrtc) and `sip_data` for SIP. Requests are signed with `X-SignalWire-Signature`. Reply with `application/json` or YAML. Exact live payload not yet captured.",
+    "doc_citations": [
+      "evidence/docs/swml/public_swml_calling_webhook_payload.md",
+      "evidence/docs/swml_facts.json (5)"
+    ],
+    "status": "DOCUMENTED (not observed)",
+    "answer": "Documented: an HTTP POST with a JSON body whose top-level keys are `call`, `vars`, `envs`, `params` (`params` is `{}` on the first inbound fetch). `call` carries `call_id`, `call_state`, `direction`, `from`, `to`, `headers[]`, `node_id`, `project_id`, `segment_id`, `space_id`, `type` (sip, phone, webrtc) and `sip_data` for SIP. Requests are signed with `X-SignalWire-Signature`. Reply with `application/json` or YAML. Exact live payload not yet captured.",
+    "blocked_reason": "Live tests not run. Preflight failed: .env inputs SW_SPACE, SW_PROJECT_ID, SW_API_TOKEN -> missing: ['SW_SPACE', 'SW_PROJECT_ID', 'SW_API_TOKEN']; reach https://signalwire.com/api/relay/rest/phone_numbers -> ProxyError('403 Forbidden'); reach https://signalwire.com/docs/llms.txt -> ProxyError('403 Forbidden'); reach https://api.trycloudflare.com -> ProxyError('403 Forbidden')",
+    "runs": [],
+    "evidence": [
+      "evidence/docs/swml/public_swml_calling_webhook_payload.md",
+      "evidence/docs/swml_facts.json (5)"
+    ],
+    "hypothesis": "The inbound SWML webhook request carries call.call_id, call.from and call.to"
+  },
+  "A5": {
+    "id": "A5",
+    "part": "A",
+    "question": "Can the browser dial an SWML webhook address with userVariables, and what caller identity does the webhook receive?",
+    "doc_answer": "Partly documented. The v4 dial shape is confirmed from the published SDK types: `client.dial('/private/<name>', { audio: true, video: false, userVariables: { to, crm_call_id } })`; there is no `to` option, the destination is the first argument. Which webhook field carries userVariables, and which field identifies the calling Subscriber, are not documented for the SWML fetch: `vars.userVariables` appears only in SWAIG examples, and `call.from` is described only as \"the number/URI that initiated this call\". The Browser SDK guide shows a Subscriber `from` as an address like `/private/alice`. The forged-identity check needs the live run.",
+    "doc_citations": [
+      "evidence/sdk/sdk_facts.md (Item 3)",
+      "evidence/docs/swml_facts.json (5)",
+      "evidence/docs/extra/multi_device_and_reject.md"
+    ],
+    "status": "DOCUMENTED (not observed)",
+    "answer": "Partly documented. The v4 dial shape is confirmed from the published SDK types: `client.dial('/private/<name>', { audio: true, video: false, userVariables: { to, crm_call_id } })`; there is no `to` option, the destination is the first argument. Which webhook field carries userVariables, and which field identifies the calling Subscriber, are not documented for the SWML fetch: `vars.userVariables` appears only in SWAIG examples, and `call.from` is described only as \"the number/URI that initiated this call\". The Browser SDK guide shows a Subscriber `from` as an address like `/private/alice`. The forged-identity check needs the live run.",
+    "blocked_reason": "Live tests not run. Preflight failed: .env inputs SW_SPACE, SW_PROJECT_ID, SW_API_TOKEN -> missing: ['SW_SPACE', 'SW_PROJECT_ID', 'SW_API_TOKEN']; reach https://signalwire.com/api/relay/rest/phone_numbers -> ProxyError('403 Forbidden'); reach https://signalwire.com/docs/llms.txt -> ProxyError('403 Forbidden'); reach https://api.trycloudflare.com -> ProxyError('403 Forbidden')",
+    "runs": [],
+    "evidence": [
+      "evidence/sdk/sdk_facts.md (Item 3)",
+      "evidence/docs/swml_facts.json (5)",
+      "evidence/docs/extra/multi_device_and_reject.md"
+    ],
+    "hypothesis": "Browser dial() to an SWML webhook address delivers userVariables to the webhook under vars.userVariables"
+  },
+  "A6": {
+    "id": "A6",
+    "part": "A",
+    "question": "connect serial fallback to a phone number after the Subscriber times out, and connect_result branching",
+    "doc_answer": "Documented: `connect` accepts `serial` (try in order), `parallel` or `serial_parallel`, with a per-destination `timeout`, so a Subscriber address followed by a phone number gives fallback. After `connect`, `connect_result` is `connected` or `failed` (and `return_value` equals it); `connect.result` or a `switch` on `connect_result` selects the voicemail branch. `connect_failed_reason` has no documented value list. Not yet observed.",
+    "doc_citations": [
+      "evidence/docs/swml/public_swml_connect.md",
+      "evidence/docs/swml_facts.json (1, 2)"
+    ],
+    "status": "DOCUMENTED (not observed)",
+    "answer": "Documented: `connect` accepts `serial` (try in order), `parallel` or `serial_parallel`, with a per-destination `timeout`, so a Subscriber address followed by a phone number gives fallback. After `connect`, `connect_result` is `connected` or `failed` (and `return_value` equals it); `connect.result` or a `switch` on `connect_result` selects the voicemail branch. `connect_failed_reason` has no documented value list. Not yet observed.",
+    "blocked_reason": "Live tests not run. Preflight failed: .env inputs SW_SPACE, SW_PROJECT_ID, SW_API_TOKEN -> missing: ['SW_SPACE', 'SW_PROJECT_ID', 'SW_API_TOKEN']; reach https://signalwire.com/api/relay/rest/phone_numbers -> ProxyError('403 Forbidden'); reach https://signalwire.com/docs/llms.txt -> ProxyError('403 Forbidden'); reach https://api.trycloudflare.com -> ProxyError('403 Forbidden')",
+    "runs": [],
+    "evidence": [
+      "evidence/docs/swml/public_swml_connect.md",
+      "evidence/docs/swml_facts.json (1, 2)"
+    ],
+    "hypothesis": "connect.serial falls back to a phone number after the Subscriber times out"
+  },
+  "A7": {
+    "id": "A7",
+    "part": "A",
+    "question": "Exact REST command names and payloads for record start, pause, resume, stop, and hangup",
+    "doc_answer": "Documented on `POST /api/calling/calls` with Basic auth: `{\"command\":\"calling.record\",\"id\":<call_id>,\"params\":{\"control_id\":..,\"audio\":{\"format\":\"mp3\",\"stereo\":true,\"direction\":\"both\"}}}`; `calling.record.pause` with `{control_id, behavior}` where behavior is `skip` (default) or `silence`; `calling.record.resume` and `calling.record.stop` with `{control_id}`; hangup is `calling.end` with `{reason:\"hangup\"}`. The exact nesting of `audio` under `params` comes from SDK-level docs and needs the live run to confirm.",
+    "doc_citations": [
+      "evidence/docs/rest/calling_api_call_commands.md",
+      "evidence/docs/rest_facts.json (1_calling_rest_api)"
+    ],
+    "status": "DOCUMENTED (not observed)",
+    "answer": "Documented on `POST /api/calling/calls` with Basic auth: `{\"command\":\"calling.record\",\"id\":<call_id>,\"params\":{\"control_id\":..,\"audio\":{\"format\":\"mp3\",\"stereo\":true,\"direction\":\"both\"}}}`; `calling.record.pause` with `{control_id, behavior}` where behavior is `skip` (default) or `silence`; `calling.record.resume` and `calling.record.stop` with `{control_id}`; hangup is `calling.end` with `{reason:\"hangup\"}`. The exact nesting of `audio` under `params` comes from SDK-level docs and needs the live run to confirm.",
+    "blocked_reason": "Live tests not run. Preflight failed: .env inputs SW_SPACE, SW_PROJECT_ID, SW_API_TOKEN -> missing: ['SW_SPACE', 'SW_PROJECT_ID', 'SW_API_TOKEN']; reach https://signalwire.com/api/relay/rest/phone_numbers -> ProxyError('403 Forbidden'); reach https://signalwire.com/docs/llms.txt -> ProxyError('403 Forbidden'); reach https://api.trycloudflare.com -> ProxyError('403 Forbidden')",
+    "runs": [],
+    "evidence": [
+      "evidence/docs/rest/calling_api_call_commands.md",
+      "evidence/docs/rest_facts.json (1_calling_rest_api)"
+    ],
+    "hypothesis": "calling.record / record.pause / record.resume / record.stop / calling.end succeed on the anchor leg"
+  },
+  "A8": {
+    "id": "A8",
+    "part": "A",
+    "question": "Stereo MP3 of both parties: format and channel mapping, inbound and outbound",
+    "doc_answer": "Not answered by documentation. `stereo: true` with `format: mp3` is a documented option, but which party lands on which channel is not documented. The FFT analyzer that answers this is built and passes its self-test on synthetic audio; it needs real recordings.",
+    "doc_citations": [
+      "evidence/docs/swml_facts.json (3, gaps)",
+      "evidence/selftest/audio/result.json"
+    ],
+    "status": "BLOCKED",
+    "answer": "Not answered by documentation. `stereo: true` with `format: mp3` is a documented option, but which party lands on which channel is not documented. The FFT analyzer that answers this is built and passes its self-test on synthetic audio; it needs real recordings.",
+    "blocked_reason": "Live tests not run. Preflight failed: .env inputs SW_SPACE, SW_PROJECT_ID, SW_API_TOKEN -> missing: ['SW_SPACE', 'SW_PROJECT_ID', 'SW_API_TOKEN']; reach https://signalwire.com/api/relay/rest/phone_numbers -> ProxyError('403 Forbidden'); reach https://signalwire.com/docs/llms.txt -> ProxyError('403 Forbidden'); reach https://api.trycloudflare.com -> ProxyError('403 Forbidden')",
+    "runs": [],
+    "evidence": [
+      "evidence/docs/swml_facts.json (3, gaps)",
+      "evidence/selftest/audio/result.json"
+    ],
+    "hypothesis": "A stereo recording puts each party on its own channel"
+  },
+  "A9": {
+    "id": "A9",
+    "part": "A",
+    "question": "Which status webhooks fire for connect, recording and call end, and where is the REST recording callback configured?",
+    "doc_answer": "Documented events: `connect.status_url` posts `calling.call.connect` (connect_state connecting, connected, failed, disconnected); `call_state_url` posts `calling.call.state` (created, ringing, answered, ended with end_reason); recording `status_url` posts `calling.call.record` (state recording, paused, finished, no_input, error, with url, recording_id, duration, size). For a REST-started recording the callback goes in `params.status_url` of `calling.record` per SDK-level docs. Which location delivers in practice needs the live run.",
+    "doc_citations": [
+      "evidence/docs/swml_facts.json (1, 3)",
+      "evidence/docs/rest/swml_record_call_status_callbacks.md"
+    ],
+    "status": "DOCUMENTED (not observed)",
+    "answer": "Documented events: `connect.status_url` posts `calling.call.connect` (connect_state connecting, connected, failed, disconnected); `call_state_url` posts `calling.call.state` (created, ringing, answered, ended with end_reason); recording `status_url` posts `calling.call.record` (state recording, paused, finished, no_input, error, with url, recording_id, duration, size). For a REST-started recording the callback goes in `params.status_url` of `calling.record` per SDK-level docs. Which location delivers in practice needs the live run.",
+    "blocked_reason": "Live tests not run. Preflight failed: .env inputs SW_SPACE, SW_PROJECT_ID, SW_API_TOKEN -> missing: ['SW_SPACE', 'SW_PROJECT_ID', 'SW_API_TOKEN']; reach https://signalwire.com/api/relay/rest/phone_numbers -> ProxyError('403 Forbidden'); reach https://signalwire.com/docs/llms.txt -> ProxyError('403 Forbidden'); reach https://api.trycloudflare.com -> ProxyError('403 Forbidden')",
+    "runs": [],
+    "evidence": [
+      "evidence/docs/swml_facts.json (1, 3)",
+      "evidence/docs/rest/swml_record_call_status_callbacks.md"
+    ],
+    "hypothesis": "Connect, recording and call-end status webhooks are delivered"
+  },
+  "A10": {
+    "id": "A10",
+    "part": "A",
+    "question": "Which call_id must REST commands target (anchor rule)?",
+    "doc_answer": "Not documented. No source searched states an anchor-leg rule for REST commands. The harness sends `calling.record` to both legs on inbound and outbound calls to settle it.",
+    "doc_citations": [
+      "evidence/docs/rest_facts.json (1_calling_rest_api, gaps)"
+    ],
+    "status": "BLOCKED",
+    "answer": "Not documented. No source searched states an anchor-leg rule for REST commands. The harness sends `calling.record` to both legs on inbound and outbound calls to settle it.",
+    "blocked_reason": "Live tests not run. Preflight failed: .env inputs SW_SPACE, SW_PROJECT_ID, SW_API_TOKEN -> missing: ['SW_SPACE', 'SW_PROJECT_ID', 'SW_API_TOKEN']; reach https://signalwire.com/api/relay/rest/phone_numbers -> ProxyError('403 Forbidden'); reach https://signalwire.com/docs/llms.txt -> ProxyError('403 Forbidden'); reach https://api.trycloudflare.com -> ProxyError('403 Forbidden')",
+    "runs": [],
+    "evidence": [
+      "evidence/docs/rest_facts.json (1_calling_rest_api, gaps)"
+    ],
+    "hypothesis": "REST recording commands succeed only on the anchor leg"
+  },
+  "A11": {
+    "id": "A11",
+    "part": "A",
+    "question": "Maximum devices per Subscriber",
+    "doc_answer": "Not documented. No maximum devices per Subscriber appears in docs, and the SDK has no client-side device limit constant. Needs the 5, 10, 20 device run.",
+    "doc_citations": [
+      "evidence/sdk/sdk_facts.md (Item 7)",
+      "evidence/docs/extra/multi_device_and_reject.md"
+    ],
+    "status": "BLOCKED",
+    "answer": "Not documented. No maximum devices per Subscriber appears in docs, and the SDK has no client-side device limit constant. Needs the 5, 10, 20 device run.",
+    "blocked_reason": "Live tests not run. Preflight failed: .env inputs SW_SPACE, SW_PROJECT_ID, SW_API_TOKEN -> missing: ['SW_SPACE', 'SW_PROJECT_ID', 'SW_API_TOKEN']; reach https://signalwire.com/api/relay/rest/phone_numbers -> ProxyError('403 Forbidden'); reach https://signalwire.com/docs/llms.txt -> ProxyError('403 Forbidden'); reach https://api.trycloudflare.com -> ProxyError('403 Forbidden')",
+    "runs": [],
+    "evidence": [
+      "evidence/sdk/sdk_facts.md (Item 7)",
+      "evidence/docs/extra/multi_device_and_reject.md"
+    ],
+    "hypothesis": "Every registered device rings (5, 10, 20 devices)"
+  },
+  "A12": {
+    "id": "A12",
+    "part": "A",
+    "question": "Cost per call by product",
+    "doc_answer": "No calls were placed, so there is no per-call cost data. Published list rates (not observed charges): WebRTC $0.003/min each way, local PSTN $0.0066/min inbound and $0.008/min outbound, call recording $0.002/min. Per-call charges come from `GET /api/voice/logs`; its cost fields are not documented and must be read from a live response.",
+    "doc_citations": [
+      "evidence/docs/rest/pricing.md",
+      "evidence/docs/rest/voice_logs_api.md"
+    ],
+    "status": "BLOCKED",
+    "answer": "No calls were placed, so there is no per-call cost data. Published list rates (not observed charges): WebRTC $0.003/min each way, local PSTN $0.0066/min inbound and $0.008/min outbound, call recording $0.002/min. Per-call charges come from `GET /api/voice/logs`; its cost fields are not documented and must be read from a live response.",
+    "blocked_reason": "Live tests not run. Preflight failed: .env inputs SW_SPACE, SW_PROJECT_ID, SW_API_TOKEN -> missing: ['SW_SPACE', 'SW_PROJECT_ID', 'SW_API_TOKEN']; reach https://signalwire.com/api/relay/rest/phone_numbers -> ProxyError('403 Forbidden'); reach https://signalwire.com/docs/llms.txt -> ProxyError('403 Forbidden'); reach https://api.trycloudflare.com -> ProxyError('403 Forbidden')",
+    "runs": [],
+    "evidence": [
+      "evidence/docs/rest/pricing.md",
+      "evidence/docs/rest/voice_logs_api.md"
+    ],
+    "hypothesis": null
+  },
+  "B1": {
+    "id": "B1",
+    "part": "B",
+    "question": "No device registered for a Subscriber in the parallel list: fail fast or wait for timeout?",
+    "doc_answer": "Not documented. Whether `connect` fails fast or waits for `timeout` when a Subscriber has no registrations is not stated. Needs the live run.",
+    "doc_citations": [
+      "evidence/docs/swml_facts.json (1)"
+    ],
+    "status": "BLOCKED",
+    "answer": "Not documented. Whether `connect` fails fast or waits for `timeout` when a Subscriber has no registrations is not stated. Needs the live run.",
+    "blocked_reason": "Live tests not run. Preflight failed: .env inputs SW_SPACE, SW_PROJECT_ID, SW_API_TOKEN -> missing: ['SW_SPACE', 'SW_PROJECT_ID', 'SW_API_TOKEN']; reach https://signalwire.com/api/relay/rest/phone_numbers -> ProxyError('403 Forbidden'); reach https://signalwire.com/docs/llms.txt -> ProxyError('403 Forbidden'); reach https://api.trycloudflare.com -> ProxyError('403 Forbidden')",
+    "runs": [],
+    "evidence": [
+      "evidence/docs/swml_facts.json (1)"
+    ],
+    "hypothesis": "With zero registrations, connect fails before the configured timeout"
+  },
+  "B2": {
+    "id": "B2",
+    "part": "B",
+    "question": "Parallel destination cap for connect.parallel",
+    "doc_answer": "Not documented. No parallel destination limit appears in SWML docs or the SWML JSON schema (no maxItems). The reported 20-destination limit is not in any source searched; the only related figure is cXML `<Dial>` allowing up to 10 `<Sip>` nouns, which is a different product.",
+    "doc_citations": [
+      "evidence/docs/swml_facts.json (1, gaps)"
+    ],
+    "status": "BLOCKED",
+    "answer": "Not documented. No parallel destination limit appears in SWML docs or the SWML JSON schema (no maxItems). The reported 20-destination limit is not in any source searched; the only related figure is cXML `<Dial>` allowing up to 10 `<Sip>` nouns, which is a different product.",
+    "blocked_reason": "Live tests not run. Preflight failed: .env inputs SW_SPACE, SW_PROJECT_ID, SW_API_TOKEN -> missing: ['SW_SPACE', 'SW_PROJECT_ID', 'SW_API_TOKEN']; reach https://signalwire.com/api/relay/rest/phone_numbers -> ProxyError('403 Forbidden'); reach https://signalwire.com/docs/llms.txt -> ProxyError('403 Forbidden'); reach https://api.trycloudflare.com -> ProxyError('403 Forbidden')",
+    "runs": [],
+    "evidence": [
+      "evidence/docs/swml_facts.json (1, gaps)"
+    ],
+    "hypothesis": "connect.parallel rings all 22 Subscribers"
+  },
+  "B3": {
+    "id": "B3",
+    "part": "B",
+    "question": "Does an expiring SAT drop an active call?",
+    "doc_answer": "Not documented for active calls. The SDK validates `expiry_at` only at construction (`Provided credentials have expired`) and on reconnect; nothing in the docs or SDK says an established media session is torn down at token expiry. Needs the live run.",
+    "doc_citations": [
+      "evidence/sdk/sdk_facts.md (Item 1)"
+    ],
+    "status": "BLOCKED",
+    "answer": "Not documented for active calls. The SDK validates `expiry_at` only at construction (`Provided credentials have expired`) and on reconnect; nothing in the docs or SDK says an established media session is torn down at token expiry. Needs the live run.",
+    "blocked_reason": "Live tests not run. Preflight failed: .env inputs SW_SPACE, SW_PROJECT_ID, SW_API_TOKEN -> missing: ['SW_SPACE', 'SW_PROJECT_ID', 'SW_API_TOKEN']; reach https://signalwire.com/api/relay/rest/phone_numbers -> ProxyError('403 Forbidden'); reach https://signalwire.com/docs/llms.txt -> ProxyError('403 Forbidden'); reach https://api.trycloudflare.com -> ProxyError('403 Forbidden')",
+    "runs": [],
+    "evidence": [
+      "evidence/sdk/sdk_facts.md (Item 1)"
+    ],
+    "hypothesis": "An active call survives SAT expiry"
+  },
+  "B4": {
+    "id": "B4",
+    "part": "B",
+    "question": "Does automatic refresh work (backend refresh vs fingerprint + sat:refresh)?",
+    "doc_answer": "Documented in the SDK: pass a provider with `refresh()` and `expiry_at` (ms); the SDK calls `refresh()` 5 s before expiry and retries up to 5 times with backoff, then emits `TokenRefreshError` on `client.errors$` and disconnects. With a token minted with `scope: [\"sat:refresh\"]` and the SDK's `fingerprint`, the SDK refreshes on its own through `/api/fabric/subscriber/devices/token` and `/devices/refresh`. Backend refresh uses `POST /api/fabric/subscribers/tokens/refresh {refresh_token}`. Not yet observed.",
+    "doc_citations": [
+      "evidence/sdk/sdk_facts.md (Item 1)",
+      "evidence/docs/rest/fabric_subscribers_and_tokens.md"
+    ],
+    "status": "DOCUMENTED (not observed)",
+    "answer": "Documented in the SDK: pass a provider with `refresh()` and `expiry_at` (ms); the SDK calls `refresh()` 5 s before expiry and retries up to 5 times with backoff, then emits `TokenRefreshError` on `client.errors$` and disconnects. With a token minted with `scope: [\"sat:refresh\"]` and the SDK's `fingerprint`, the SDK refreshes on its own through `/api/fabric/subscriber/devices/token` and `/devices/refresh`. Backend refresh uses `POST /api/fabric/subscribers/tokens/refresh {refresh_token}`. Not yet observed.",
+    "blocked_reason": "Live tests not run. Preflight failed: .env inputs SW_SPACE, SW_PROJECT_ID, SW_API_TOKEN -> missing: ['SW_SPACE', 'SW_PROJECT_ID', 'SW_API_TOKEN']; reach https://signalwire.com/api/relay/rest/phone_numbers -> ProxyError('403 Forbidden'); reach https://signalwire.com/docs/llms.txt -> ProxyError('403 Forbidden'); reach https://api.trycloudflare.com -> ProxyError('403 Forbidden')",
+    "runs": [],
+    "evidence": [
+      "evidence/sdk/sdk_facts.md (Item 1)",
+      "evidence/docs/rest/fabric_subscribers_and_tokens.md"
+    ],
+    "hypothesis": "The refresh() provider is called before expiry and registration continues"
+  },
+  "B5": {
+    "id": "B5",
+    "part": "B",
+    "question": "Does deleting a Subscriber revoke active sessions and in-progress calls?",
+    "doc_answer": "Not documented. `DELETE /api/fabric/resources/subscribers/{id}` returns 204; the effect on live registrations and in-progress calls is not stated in public docs. Needs the live run.",
+    "doc_citations": [
+      "evidence/docs/rest_facts.json (2_fabric_subscribers)"
+    ],
+    "status": "BLOCKED",
+    "answer": "Not documented. `DELETE /api/fabric/resources/subscribers/{id}` returns 204; the effect on live registrations and in-progress calls is not stated in public docs. Needs the live run.",
+    "blocked_reason": "Live tests not run. Preflight failed: .env inputs SW_SPACE, SW_PROJECT_ID, SW_API_TOKEN -> missing: ['SW_SPACE', 'SW_PROJECT_ID', 'SW_API_TOKEN']; reach https://signalwire.com/api/relay/rest/phone_numbers -> ProxyError('403 Forbidden'); reach https://signalwire.com/docs/llms.txt -> ProxyError('403 Forbidden'); reach https://api.trycloudflare.com -> ProxyError('403 Forbidden')",
+    "runs": [],
+    "evidence": [
+      "evidence/docs/rest_facts.json (2_fabric_subscribers)"
+    ],
+    "hypothesis": "Deleting a Subscriber ends its active registration"
+  },
+  "B6": {
+    "id": "B6",
+    "part": "B",
+    "question": "Can custom data reach the browser on inbound calls?",
+    "doc_answer": "Documented as not available through headers: the v4 inbound `Call` object has no headers or custom-data property, and SWML `connect.headers` is documented as having no effect on calls to phone numbers, with no statement about WebRTC destinations. The SDK maps `userVariables` from the inbound invite onto `call.userVariables`, so that is the only documented path for custom data. Whether SWML can populate it for a Subscriber destination needs the live run.",
+    "doc_citations": [
+      "evidence/sdk/sdk_facts.md (Item 2)",
+      "evidence/docs/swml_facts.json (1)"
+    ],
+    "status": "DOCUMENTED (not observed)",
+    "answer": "Documented as not available through headers: the v4 inbound `Call` object has no headers or custom-data property, and SWML `connect.headers` is documented as having no effect on calls to phone numbers, with no statement about WebRTC destinations. The SDK maps `userVariables` from the inbound invite onto `call.userVariables`, so that is the only documented path for custom data. Whether SWML can populate it for a Subscriber destination needs the live run.",
+    "blocked_reason": "Live tests not run. Preflight failed: .env inputs SW_SPACE, SW_PROJECT_ID, SW_API_TOKEN -> missing: ['SW_SPACE', 'SW_PROJECT_ID', 'SW_API_TOKEN']; reach https://signalwire.com/api/relay/rest/phone_numbers -> ProxyError('403 Forbidden'); reach https://signalwire.com/docs/llms.txt -> ProxyError('403 Forbidden'); reach https://api.trycloudflare.com -> ProxyError('403 Forbidden')",
+    "runs": [],
+    "evidence": [
+      "evidence/sdk/sdk_facts.md (Item 2)",
+      "evidence/docs/swml_facts.json (1)"
+    ],
+    "hypothesis": "connect headers or params reach the browser Call object"
+  },
+  "B7": {
+    "id": "B7",
+    "part": "B",
+    "question": "What caller ID does the browser see on inbound, and can connect.from override it?",
+    "doc_answer": "Not documented for PSTN callers. The SDK maps `from` from the invite's `caller_id_number` and `fromName` from `caller_id_name`. The Browser SDK guide shows `from` as an address for Subscriber-to-Subscriber calls. Whether a PSTN caller appears as the original number or the Space number, and whether `connect.from` overrides it for a Resource Address, are not documented.",
+    "doc_citations": [
+      "evidence/sdk/sdk_facts.md (Item 2)",
+      "evidence/docs/extra/multi_device_and_reject.md",
+      "evidence/docs/swml_facts.json (8)"
+    ],
+    "status": "BLOCKED",
+    "answer": "Not documented for PSTN callers. The SDK maps `from` from the invite's `caller_id_number` and `fromName` from `caller_id_name`. The Browser SDK guide shows `from` as an address for Subscriber-to-Subscriber calls. Whether a PSTN caller appears as the original number or the Space number, and whether `connect.from` overrides it for a Resource Address, are not documented.",
+    "blocked_reason": "Live tests not run. Preflight failed: .env inputs SW_SPACE, SW_PROJECT_ID, SW_API_TOKEN -> missing: ['SW_SPACE', 'SW_PROJECT_ID', 'SW_API_TOKEN']; reach https://signalwire.com/api/relay/rest/phone_numbers -> ProxyError('403 Forbidden'); reach https://signalwire.com/docs/llms.txt -> ProxyError('403 Forbidden'); reach https://api.trycloudflare.com -> ProxyError('403 Forbidden')",
+    "runs": [],
+    "evidence": [
+      "evidence/sdk/sdk_facts.md (Item 2)",
+      "evidence/docs/extra/multi_device_and_reject.md",
+      "evidence/docs/swml_facts.json (8)"
+    ],
+    "hypothesis": "The browser sees the original PSTN caller number, and connect.from overrides it"
+  },
+  "B8": {
+    "id": "B8",
+    "part": "B",
+    "question": "What does the remote party hear during browser hold, and is it recorded?",
+    "doc_answer": "Not documented for the Browser SDK. `call.toggleHold()` is the only hold control in v4. RELAY server-side hold docs say the remote party \"hears hold music or silence\", without saying which. Needs the recording FFT.",
+    "doc_citations": [
+      "evidence/sdk/sdk_facts.md (Item 4)",
+      "evidence/docs/swml/public_callerid_and_hold.md"
+    ],
+    "status": "BLOCKED",
+    "answer": "Not documented for the Browser SDK. `call.toggleHold()` is the only hold control in v4. RELAY server-side hold docs say the remote party \"hears hold music or silence\", without saying which. Needs the recording FFT.",
+    "blocked_reason": "Live tests not run. Preflight failed: .env inputs SW_SPACE, SW_PROJECT_ID, SW_API_TOKEN -> missing: ['SW_SPACE', 'SW_PROJECT_ID', 'SW_API_TOKEN']; reach https://signalwire.com/api/relay/rest/phone_numbers -> ProxyError('403 Forbidden'); reach https://signalwire.com/docs/llms.txt -> ProxyError('403 Forbidden'); reach https://api.trycloudflare.com -> ProxyError('403 Forbidden')",
+    "runs": [],
+    "evidence": [
+      "evidence/sdk/sdk_facts.md (Item 4)",
+      "evidence/docs/swml/public_callerid_and_hold.md"
+    ],
+    "hypothesis": "The remote party hears silence (no 440 Hz) during browser hold, and the recording shows it"
+  },
+  "B9": {
+    "id": "B9",
+    "part": "B",
+    "question": "Can a device on an active call receive a second inbound call?",
+    "doc_answer": "Documented at the SDK level: `incomingCalls$` emits the full list of inbound calls and \"two simultaneous callers land in the same emission\"; the SDK does not queue or pick. Whether the platform offers a second call to a device already on a call needs the live run.",
+    "doc_citations": [
+      "evidence/docs/extra/multi_device_and_reject.md",
+      "evidence/sdk/sdk_facts.md (Item 2)"
+    ],
+    "status": "DOCUMENTED (not observed)",
+    "answer": "Documented at the SDK level: `incomingCalls$` emits the full list of inbound calls and \"two simultaneous callers land in the same emission\"; the SDK does not queue or pick. Whether the platform offers a second call to a device already on a call needs the live run.",
+    "blocked_reason": "Live tests not run. Preflight failed: .env inputs SW_SPACE, SW_PROJECT_ID, SW_API_TOKEN -> missing: ['SW_SPACE', 'SW_PROJECT_ID', 'SW_API_TOKEN']; reach https://signalwire.com/api/relay/rest/phone_numbers -> ProxyError('403 Forbidden'); reach https://signalwire.com/docs/llms.txt -> ProxyError('403 Forbidden'); reach https://api.trycloudflare.com -> ProxyError('403 Forbidden')",
+    "runs": [],
+    "evidence": [
+      "evidence/docs/extra/multi_device_and_reject.md",
+      "evidence/sdk/sdk_facts.md (Item 2)"
+    ],
+    "hypothesis": "A device on an active call is offered a second inbound call"
+  },
+  "B10": {
+    "id": "B10",
+    "part": "B",
+    "question": "Server-side transfer of a connected call to another Subscriber and to a phone number",
+    "doc_answer": "Documented: `calling.transfer` with `dest` (an SWML URL or inline document) on the call; SWML `transfer` also takes `dest`. Pointing `dest` at SWML that `connect`s to another Subscriber address or a phone number is the documented pattern. The browser-side `call.transfer({destination})` also exists in v4. What each party experiences needs the live run.",
+    "doc_citations": [
+      "evidence/docs/rest_facts.json (1_calling_rest_api)",
+      "evidence/sdk/sdk_facts.md (Item 4)"
+    ],
+    "status": "DOCUMENTED (not observed)",
+    "answer": "Documented: `calling.transfer` with `dest` (an SWML URL or inline document) on the call; SWML `transfer` also takes `dest`. Pointing `dest` at SWML that `connect`s to another Subscriber address or a phone number is the documented pattern. The browser-side `call.transfer({destination})` also exists in v4. What each party experiences needs the live run.",
+    "blocked_reason": "Live tests not run. Preflight failed: .env inputs SW_SPACE, SW_PROJECT_ID, SW_API_TOKEN -> missing: ['SW_SPACE', 'SW_PROJECT_ID', 'SW_API_TOKEN']; reach https://signalwire.com/api/relay/rest/phone_numbers -> ProxyError('403 Forbidden'); reach https://signalwire.com/docs/llms.txt -> ProxyError('403 Forbidden'); reach https://api.trycloudflare.com -> ProxyError('403 Forbidden')",
+    "runs": [],
+    "evidence": [
+      "evidence/docs/rest_facts.json (1_calling_rest_api)",
+      "evidence/sdk/sdk_facts.md (Item 4)"
+    ],
+    "hypothesis": "calling.transfer moves a connected call to another Subscriber and to a phone number"
+  },
+  "B11": {
+    "id": "B11",
+    "part": "B",
+    "question": "Webhook authenticity: signature header and validation",
+    "doc_answer": "Documented: `X-SignalWire-Signature` is hex HMAC-SHA1 and `X-SignalWire-Sha256-Signature` is hex HMAC-SHA256, both over `url + raw_body`, keyed with the project Signing Key (not the API token). The harness validator agrees with SignalWire's published Python RequestValidator and rejects a tampered body (local self-test). Not yet checked against a live webhook.",
+    "doc_citations": [
+      "evidence/docs/swml/public_swml_webhook_security.md",
+      "evidence/docs/swml/sdk_webhook_signature_validation.md",
+      "evidence/selftest/signature/result.json"
+    ],
+    "status": "DOCUMENTED (not observed)",
+    "answer": "Documented: `X-SignalWire-Signature` is hex HMAC-SHA1 and `X-SignalWire-Sha256-Signature` is hex HMAC-SHA256, both over `url + raw_body`, keyed with the project Signing Key (not the API token). The harness validator agrees with SignalWire's published Python RequestValidator and rejects a tampered body (local self-test). Not yet checked against a live webhook.",
+    "blocked_reason": "Live tests not run. Preflight failed: .env inputs SW_SPACE, SW_PROJECT_ID, SW_API_TOKEN -> missing: ['SW_SPACE', 'SW_PROJECT_ID', 'SW_API_TOKEN']; reach https://signalwire.com/api/relay/rest/phone_numbers -> ProxyError('403 Forbidden'); reach https://signalwire.com/docs/llms.txt -> ProxyError('403 Forbidden'); reach https://api.trycloudflare.com -> ProxyError('403 Forbidden')",
+    "runs": [],
+    "evidence": [
+      "evidence/docs/swml/public_swml_webhook_security.md",
+      "evidence/docs/swml/sdk_webhook_signature_validation.md",
+      "evidence/selftest/signature/result.json"
+    ],
+    "hypothesis": "Webhooks carry X-SignalWire-Signature that validates with the Signing Key"
+  },
+  "B12": {
+    "id": "B12",
+    "part": "B",
+    "question": "Webhook reliability: retries and timeouts when the backend is slow or returns 500",
+    "doc_answer": "Partly documented: SignalWire waits about 5 seconds for SWML, then uses `fallback_request_url` on timeout, 5xx or invalid SWML, and the call fails with `http_retrieval_error` if nothing usable returns. Retry counts for SWML fetches and SWML status callbacks are not documented (the 3-attempt status callback retry applies to cXML).",
+    "doc_citations": [
+      "evidence/docs/swml/public_swml_webhook_reliability.md",
+      "evidence/docs/swml/public_compat_webhooks_timeouts_retries.md"
+    ],
+    "status": "DOCUMENTED (not observed)",
+    "answer": "Partly documented: SignalWire waits about 5 seconds for SWML, then uses `fallback_request_url` on timeout, 5xx or invalid SWML, and the call fails with `http_retrieval_error` if nothing usable returns. Retry counts for SWML fetches and SWML status callbacks are not documented (the 3-attempt status callback retry applies to cXML).",
+    "blocked_reason": "Live tests not run. Preflight failed: .env inputs SW_SPACE, SW_PROJECT_ID, SW_API_TOKEN -> missing: ['SW_SPACE', 'SW_PROJECT_ID', 'SW_API_TOKEN']; reach https://signalwire.com/api/relay/rest/phone_numbers -> ProxyError('403 Forbidden'); reach https://signalwire.com/docs/llms.txt -> ProxyError('403 Forbidden'); reach https://api.trycloudflare.com -> ProxyError('403 Forbidden')",
+    "runs": [],
+    "evidence": [
+      "evidence/docs/swml/public_swml_webhook_reliability.md",
+      "evidence/docs/swml/public_compat_webhooks_timeouts_retries.md"
+    ],
+    "hypothesis": "A slow or failing SWML endpoint is retried"
+  },
+  "B13": {
+    "id": "B13",
+    "part": "B",
+    "question": "Recording retention and deletion via API",
+    "doc_answer": "Documented: `GET /api/relay/rest/recordings`, `GET` and `DELETE /api/relay/rest/recordings/{id}` (also the cXML Recordings endpoints). Retention: the cXML docs say recordings remain stored indefinitely until deleted. Whether the media URL stops serving after delete needs the live run.",
+    "doc_citations": [
+      "evidence/docs/rest/recordings_api.md"
+    ],
+    "status": "DOCUMENTED (not observed)",
+    "answer": "Documented: `GET /api/relay/rest/recordings`, `GET` and `DELETE /api/relay/rest/recordings/{id}` (also the cXML Recordings endpoints). Retention: the cXML docs say recordings remain stored indefinitely until deleted. Whether the media URL stops serving after delete needs the live run.",
+    "blocked_reason": "Live tests not run. Preflight failed: .env inputs SW_SPACE, SW_PROJECT_ID, SW_API_TOKEN -> missing: ['SW_SPACE', 'SW_PROJECT_ID', 'SW_API_TOKEN']; reach https://signalwire.com/api/relay/rest/phone_numbers -> ProxyError('403 Forbidden'); reach https://signalwire.com/docs/llms.txt -> ProxyError('403 Forbidden'); reach https://api.trycloudflare.com -> ProxyError('403 Forbidden')",
+    "runs": [],
+    "evidence": [
+      "evidence/docs/rest/recordings_api.md"
+    ],
+    "hypothesis": "A recording can be listed, fetched and deleted, and its URL stops serving"
+  },
+  "B14": {
+    "id": "B14",
+    "part": "B",
+    "question": "Outbound CPS: what happens when the default limit is exceeded?",
+    "doc_answer": "Documented: the default is 1 call per second, and calls above it are queued (backlog of 10,000) rather than rejected; when the backlog is full SignalWire stops adding calls. The error returned at that point is not documented.",
+    "doc_citations": [
+      "evidence/docs/rest/platform_rate_limits.md"
+    ],
+    "status": "DOCUMENTED (not observed)",
+    "answer": "Documented: the default is 1 call per second, and calls above it are queued (backlog of 10,000) rather than rejected; when the backlog is full SignalWire stops adding calls. The error returned at that point is not documented.",
+    "blocked_reason": "Live tests not run. Preflight failed: .env inputs SW_SPACE, SW_PROJECT_ID, SW_API_TOKEN -> missing: ['SW_SPACE', 'SW_PROJECT_ID', 'SW_API_TOKEN']; reach https://signalwire.com/api/relay/rest/phone_numbers -> ProxyError('403 Forbidden'); reach https://signalwire.com/docs/llms.txt -> ProxyError('403 Forbidden'); reach https://api.trycloudflare.com -> ProxyError('403 Forbidden')",
+    "runs": [],
+    "evidence": [
+      "evidence/docs/rest/platform_rate_limits.md"
+    ],
+    "hypothesis": "Bursts above the default CPS are queued rather than rejected"
+  },
+  "B15": {
+    "id": "B15",
+    "part": "B",
+    "question": "Negotiated codecs on the WebRTC leg and the PSTN leg",
+    "doc_answer": "Not documented. The SDK offers `preferredAudioCodecs` on dial and exposes `call.rtcPeerConnection` for `getStats()`; it has no codec getter. SWML `connect.codecs` sets offered codecs. Negotiated codecs need the live run.",
+    "doc_citations": [
+      "evidence/sdk/sdk_facts.md (Items 3, 6)",
+      "evidence/docs/swml_facts.json (1)"
+    ],
+    "status": "BLOCKED",
+    "answer": "Not documented. The SDK offers `preferredAudioCodecs` on dial and exposes `call.rtcPeerConnection` for `getStats()`; it has no codec getter. SWML `connect.codecs` sets offered codecs. Negotiated codecs need the live run.",
+    "blocked_reason": "Live tests not run. Preflight failed: .env inputs SW_SPACE, SW_PROJECT_ID, SW_API_TOKEN -> missing: ['SW_SPACE', 'SW_PROJECT_ID', 'SW_API_TOKEN']; reach https://signalwire.com/api/relay/rest/phone_numbers -> ProxyError('403 Forbidden'); reach https://signalwire.com/docs/llms.txt -> ProxyError('403 Forbidden'); reach https://api.trycloudflare.com -> ProxyError('403 Forbidden')",
+    "runs": [],
+    "evidence": [
+      "evidence/sdk/sdk_facts.md (Items 3, 6)",
+      "evidence/docs/swml_facts.json (1)"
+    ],
+    "hypothesis": "Codecs are visible in getStats()"
+  },
+  "B16": {
+    "id": "B16",
+    "part": "B",
+    "question": "Can one Subscriber hold multiple simultaneous connected calls across devices?",
+    "doc_answer": "Not documented. No source states whether one Subscriber can hold two connected calls on two devices at once. Needs the live run.",
+    "doc_citations": [
+      "evidence/docs/extra/multi_device_and_reject.md"
+    ],
+    "status": "BLOCKED",
+    "answer": "Not documented. No source states whether one Subscriber can hold two connected calls on two devices at once. Needs the live run.",
+    "blocked_reason": "Live tests not run. Preflight failed: .env inputs SW_SPACE, SW_PROJECT_ID, SW_API_TOKEN -> missing: ['SW_SPACE', 'SW_PROJECT_ID', 'SW_API_TOKEN']; reach https://signalwire.com/api/relay/rest/phone_numbers -> ProxyError('403 Forbidden'); reach https://signalwire.com/docs/llms.txt -> ProxyError('403 Forbidden'); reach https://api.trycloudflare.com -> ProxyError('403 Forbidden')",
+    "runs": [],
+    "evidence": [
+      "evidence/docs/extra/multi_device_and_reject.md"
+    ],
+    "hypothesis": "One Subscriber can hold two simultaneous connected calls on two devices"
+  },
+  "B17": {
+    "id": "B17",
+    "part": "B",
+    "question": "Can one browser register as two Subscribers?",
+    "doc_answer": "Partly documented from the SDK source: multiple `SignalWire` instances can be created in one page, but `sw:cached_credential`, `sw:client_bound`, `sw:preferences` and the IndexedDB DPoP key are shared across instances. Pass a separate `storageImplementation` to each client to keep two Subscribers apart. Whether the platform accepts both registrations needs the live run.",
+    "doc_citations": [
+      "evidence/sdk/sdk_facts.md (Item 5)"
+    ],
+    "status": "DOCUMENTED (not observed)",
+    "answer": "Partly documented from the SDK source: multiple `SignalWire` instances can be created in one page, but `sw:cached_credential`, `sw:client_bound`, `sw:preferences` and the IndexedDB DPoP key are shared across instances. Pass a separate `storageImplementation` to each client to keep two Subscribers apart. Whether the platform accepts both registrations needs the live run.",
+    "blocked_reason": "Live tests not run. Preflight failed: .env inputs SW_SPACE, SW_PROJECT_ID, SW_API_TOKEN -> missing: ['SW_SPACE', 'SW_PROJECT_ID', 'SW_API_TOKEN']; reach https://signalwire.com/api/relay/rest/phone_numbers -> ProxyError('403 Forbidden'); reach https://signalwire.com/docs/llms.txt -> ProxyError('403 Forbidden'); reach https://api.trycloudflare.com -> ProxyError('403 Forbidden')",
+    "runs": [],
+    "evidence": [
+      "evidence/sdk/sdk_facts.md (Item 5)"
+    ],
+    "hypothesis": "One browser can register as two Subscribers"
+  },
+  "B18": {
+    "id": "B18",
+    "part": "B",
+    "question": "Does connect_result differ between decline, no answer, and no registrations?",
+    "doc_answer": "Documented: `connect_result` has two values, `connected` and `failed`, so decline, no answer and no registrations all read `failed`. Any distinction would be in `connect_failed_reason` (no documented values) or in `call_state_url` `end_reason` (hangup, busy, no_answer, cancel, declined, error).",
+    "doc_citations": [
+      "evidence/docs/swml_facts.json (1)"
+    ],
+    "status": "DOCUMENTED (not observed)",
+    "answer": "Documented: `connect_result` has two values, `connected` and `failed`, so decline, no answer and no registrations all read `failed`. Any distinction would be in `connect_failed_reason` (no documented values) or in `call_state_url` `end_reason` (hangup, busy, no_answer, cancel, declined, error).",
+    "blocked_reason": "Live tests not run. Preflight failed: .env inputs SW_SPACE, SW_PROJECT_ID, SW_API_TOKEN -> missing: ['SW_SPACE', 'SW_PROJECT_ID', 'SW_API_TOKEN']; reach https://signalwire.com/api/relay/rest/phone_numbers -> ProxyError('403 Forbidden'); reach https://signalwire.com/docs/llms.txt -> ProxyError('403 Forbidden'); reach https://api.trycloudflare.com -> ProxyError('403 Forbidden')",
+    "runs": [],
+    "evidence": [
+      "evidence/docs/swml_facts.json (1)"
+    ],
+    "hypothesis": null
+  },
+  "C1": {
+    "id": "C1",
+    "part": "C",
+    "question": "Is the $3/month Subscriber fee billed per Subscriber created or per Subscriber registered in the period?",
+    "doc_answer": "Public pricing lists Subscriber at $3.00/month and the Subscribers page says \"$3/user/month\". No public source says whether this is charged per Subscriber created, per Subscriber existing, or per Subscriber that registered in the period, and no usage API documented exposes Subscriber line items. Confirm with Sales.",
+    "doc_citations": [
+      "evidence/docs/rest/pricing.md"
+    ],
+    "status": "NOT DETERMINABLE EMPIRICALLY",
+    "answer": "Public pricing lists Subscriber at $3.00/month and the Subscribers page says \"$3/user/month\". No public source says whether this is charged per Subscriber created, per Subscriber existing, or per Subscriber that registered in the period, and no usage API documented exposes Subscriber line items. Confirm with Sales.",
+    "confirm_with": "Sales",
+    "evidence": [
+      "evidence/docs/rest/pricing.md"
+    ]
+  },
+  "C2": {
+    "id": "C2",
+    "part": "C",
+    "question": "How is the outbound CPS limit raised, and to what?",
+    "doc_answer": "Docs: the default is 1 CPS with a 10,000-call backlog. Throughput is raised by contacting Support; the backlog by the Space Increase Request Form. The pricing page lists paid CPS tiers at $15 to $40 per month each with a 3-month commitment. The ceiling for this account must come from Sales or Support.",
+    "doc_citations": [
+      "evidence/docs/rest/platform_rate_limits.md",
+      "evidence/docs/rest/pricing.md"
+    ],
+    "status": "NOT DETERMINABLE EMPIRICALLY",
+    "answer": "Docs: the default is 1 CPS with a 10,000-call backlog. Throughput is raised by contacting Support; the backlog by the Space Increase Request Form. The pricing page lists paid CPS tiers at $15 to $40 per month each with a 3-month commitment. The ceiling for this account must come from Sales or Support.",
+    "confirm_with": "Sales / Support",
+    "evidence": [
+      "evidence/docs/rest/platform_rate_limits.md",
+      "evidence/docs/rest/pricing.md"
+    ]
+  },
+  "C3": {
+    "id": "C3",
+    "part": "C",
+    "question": "911 from browser softphones",
+    "doc_answer": "Not tested by design. SignalWire E911 is configured per phone number with a registered US address (`POST /api/relay/rest/addresses`, then assigned to the number; status pending then active) at $0.75/month. There is no dynamic location: PIDF-LO is not used and the docs say to update the address when a device moves. Nothing in the docs covers 911 placed from WebRTC Subscribers. For counsel: Kari's Law requires direct 911 dialing without a prefix and on-site notification for multi-line telephone systems, and RAY BAUM's Act Section 506 requires a dispatchable location, including for non-fixed devices. Neither law is addressed in the SignalWire docs searched.",
+    "doc_citations": [
+      "evidence/docs/rest/e911.md"
+    ],
+    "status": "NOT DETERMINABLE EMPIRICALLY",
+    "answer": "Not tested by design. SignalWire E911 is configured per phone number with a registered US address (`POST /api/relay/rest/addresses`, then assigned to the number; status pending then active) at $0.75/month. There is no dynamic location: PIDF-LO is not used and the docs say to update the address when a device moves. Nothing in the docs covers 911 placed from WebRTC Subscribers. For counsel: Kari's Law requires direct 911 dialing without a prefix and on-site notification for multi-line telephone systems, and RAY BAUM's Act Section 506 requires a dispatchable location, including for non-fixed devices. Neither law is addressed in the SignalWire docs searched.",
+    "confirm_with": "Counsel and SignalWire Support (E911)",
+    "evidence": [
+      "evidence/docs/rest/e911.md"
+    ]
+  },
+  "C4": {
+    "id": "C4",
+    "part": "C",
+    "question": "Can numbers ported from Telnyx carry both existing 10DLC campaigns and voice?",
+    "doc_answer": "Docs: voice and messaging both work on ported numbers, but 10DLC campaigns do not transfer automatically. Each messaging provider is its own CSP registration, so a customer migrating from another provider re-registers Brand and Campaign with SignalWire, or, if they are their own CSP, selects SignalWire as the upstream CNP. The old registration stays in place until deactivated. Port-in is free and takes about a week. Confirm with Carrier Ops whether an existing campaign can be moved by CNP change without re-vetting.",
+    "doc_citations": [
+      "evidence/docs/rest/porting_and_10dlc.md"
+    ],
+    "status": "NOT DETERMINABLE EMPIRICALLY",
+    "answer": "Docs: voice and messaging both work on ported numbers, but 10DLC campaigns do not transfer automatically. Each messaging provider is its own CSP registration, so a customer migrating from another provider re-registers Brand and Campaign with SignalWire, or, if they are their own CSP, selects SignalWire as the upstream CNP. The old registration stays in place until deactivated. Port-in is free and takes about a week. Confirm with Carrier Ops whether an existing campaign can be moved by CNP change without re-vetting.",
+    "confirm_with": "Carrier Ops",
+    "evidence": [
+      "evidence/docs/rest/porting_and_10dlc.md"
+    ]
+  }
+}

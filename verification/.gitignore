@@ -3,3 +3,6 @@ evidence/sdk/*.tgz
 __pycache__/
 .env
 node_modules/
+harness/browser/signalwire.umd.js
+evidence/fixtures/
+evidence/driver.log

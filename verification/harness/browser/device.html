@@ -1,0 +1,97 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>harness device</title></head>
+<body>
+<pre id="log"></pre>
+<script src="/static/signalwire.umd.js"></script>
+<script>
+// One page = one "device". Every SDK event is reported to the backend /events sink.
+const q = new URLSearchParams(location.search);
+const DEVICE = q.get('device') || 'dev';
+const SW = window.SignalWire;
+let client = null, seen = new Set(), calls = {};
+
+function report(type, data = {}) {
+  const ev = { device: DEVICE, type, t: Date.now(), perf: performance.now(), ...data };
+  document.getElementById('log').textContent += JSON.stringify(ev) + '\n';
+  return fetch('/events', { method: 'POST', headers: { 'content-type': 'application/json' },
+                            body: JSON.stringify(ev) }).catch(() => {});
+}
+
+function describeCall(c) {
+  // Every enumerable and prototype getter we can read, so B6/B7 see the full inbound surface.
+  const out = {};
+  const keys = new Set(Object.keys(c));
+  let p = Object.getPrototypeOf(c);
+  while (p && p !== Object.prototype) { Object.getOwnPropertyNames(p).forEach(k => keys.add(k)); p = Object.getPrototypeOf(p); }
+  for (const k of keys) {
+    if (k.endsWith('$') || k === 'constructor') continue;
+    try { const v = c[k]; if (typeof v !== 'function' && (v === null || typeof v !== 'object' || k === 'userVariables')) out[k] = v; } catch (e) {}
+  }
+  return out;
+}
+
+function watchCall(c, origin) {
+  calls[c.id] = c;
+  report('call_seen', { origin, call: describeCall(c) });
+  c.status$.subscribe(s => report('status', { call_id: c.id, value: s }));
+}
+
+async function fetchToken(ref, ttl) {
+  const r = await fetch(`/token?ref=${encodeURIComponent(ref)}${ttl ? `&ttl=${ttl}` : ''}`);
+  if (!r.ok) throw new Error('token fetch ' + r.status);
+  return r.json(); // {token, expiry_at(ms)?}
+}
+
+window.harness = {
+  sdkShape() {
+    return { global: typeof SW, SignalWire: typeof SW?.SignalWire, StaticCredentialProvider: typeof SW?.StaticCredentialProvider,
+             TokenRefreshError: typeof SW?.TokenRefreshError, keys: SW ? Object.keys(SW).sort() : [] };
+  },
+  async register({ ref, ttl, mode = 'static', storageIsolated = true }) {
+    const first = await fetchToken(ref, ttl);
+    const cred = { token: first.token, ...(first.expiry_at ? { expiry_at: first.expiry_at } : {}) };
+    let provider;
+    if (mode === 'static') provider = new SW.StaticCredentialProvider(cred);
+    else if (mode === 'refresh') provider = {
+      authenticate: async () => cred,
+      refresh: async () => { report('refresh_called'); const n = await fetchToken(ref, ttl); return { token: n.token, expiry_at: n.expiry_at }; },
+    };
+    else if (mode === 'fingerprint') provider = {
+      authenticate: async (ctx) => { report('authenticate', { fingerprint: ctx?.fingerprint || null });
+        const r = await fetch(`/token?ref=${encodeURIComponent(ref)}&fingerprint=${encodeURIComponent(ctx?.fingerprint || '')}${ttl ? `&ttl=${ttl}` : ''}`);
+        const j = await r.json(); return { token: j.token, expiry_at: j.expiry_at }; },
+    };
+    const opts = storageIsolated ? { storageImplementation: (() => { const m = new Map(); return {
+      get length() { return m.size; }, key: i => [...m.keys()][i] ?? null, getItem: k => m.has(k) ? m.get(k) : null,
+      setItem: (k, v) => m.set(k, String(v)), removeItem: k => m.delete(k), clear: () => m.clear() }; })() } : {};
+    client = new SW.SignalWire(provider, opts);
+    client.errors$.subscribe(e => report('error', { name: e?.name, message: e?.message, isTokenRefreshError: e instanceof SW.TokenRefreshError }));
+    client.warnings$?.subscribe(w => report('warning', { warning: w }));
+    client.isRegistered$.subscribe(v => report('registered', { value: v }));
+    client.isConnected$.subscribe(v => report('connected', { value: v }));
+    client.session.incomingCalls$.subscribe(list => {
+      report('incoming_list', { ids: list.map(c => c.id) });
+      for (const c of list) if (!seen.has(c.id)) { seen.add(c.id); watchCall(c, 'inbound'); }
+    });
+    return true;
+  },
+  async answer(id) { const c = id ? calls[id] : Object.values(calls).find(c => c.direction === 'inbound'); report('action', { action: 'answer', call_id: c?.id }); await c.answer(); return c.id; },
+  async reject(id) { const c = id ? calls[id] : Object.values(calls).find(c => c.direction === 'inbound'); report('action', { action: 'reject', call_id: c?.id }); await c.reject(); return c.id; },
+  async hangup(id) { const c = id ? calls[id] : Object.values(calls)[0]; report('action', { action: 'hangup', call_id: c?.id }); await c.hangup(); },
+  async toggleHold(id) { const c = id ? calls[id] : Object.values(calls)[0]; report('action', { action: 'toggleHold', call_id: c?.id }); await c.toggleHold(); },
+  async mute(id) { const c = id ? calls[id] : Object.values(calls)[0]; await c.self.mute(); report('action', { action: 'mute', call_id: c?.id }); },
+  async dial(dest, userVariables) {
+    const c = await client.dial(dest, { audio: true, video: false, userVariables });
+    watchCall(c, 'outbound'); report('action', { action: 'dial', dest, userVariables, call_id: c.id }); return c.id;
+  },
+  async stats(id) {
+    const c = id ? calls[id] : Object.values(calls)[0];
+    const rep = await c.rtcPeerConnection.getStats(); const codecs = [];
+    rep.forEach(s => { if (s.type === 'codec') codecs.push({ mimeType: s.mimeType, clockRate: s.clockRate, channels: s.channels, sdpFmtpLine: s.sdpFmtpLine }); });
+    report('stats', { call_id: c.id, codecs }); return codecs;
+  },
+  async destroy() { try { await client?.destroy(); } catch (e) {} },
+};
+report('page_loaded', { shape: window.harness.sdkShape() });
+</script>
+</body></html>
